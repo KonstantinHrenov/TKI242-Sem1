@@ -15,7 +15,7 @@ namespace miit::algebra {
     }
 
     template <typename T>
-    Matrix<T>::Matrix(const std::size_t rows, const std::size_t cols, Generator& generator)
+    Matrix<T>::Matrix(const std::size_t rows, const std::size_t cols, const Generator& generator)
         : Matrix(rows, cols)
     {
         fill(generator);
@@ -28,9 +28,6 @@ namespace miit::algebra {
     Matrix<T>::Matrix(Matrix&& other) noexcept = default;
 
     template <typename T>
-    Matrix<T>::~Matrix() = default;
-
-    template <typename T>
     Matrix<T>& Matrix<T>::operator=(const Matrix& other) = default;
 
     template <typename T>
@@ -39,12 +36,20 @@ namespace miit::algebra {
     template <typename T>
     std::vector<T>& Matrix<T>::operator[](const std::size_t index)
     {
+        if (index >= rows)
+        {
+            throw std::out_of_range("Row index out of range");
+        }
         return data[index];
     }
 
     template <typename T>
     const std::vector<T>& Matrix<T>::operator[](const std::size_t index) const
     {
+        if (index >= rows)
+        {
+            throw std::out_of_range("Row index out of range");
+        }
         return data[index];
     }
 
@@ -85,7 +90,7 @@ namespace miit::algebra {
     }
 
     template <typename T>
-    void Matrix<T>::fill(Generator& generator)
+    void Matrix<T>::fill(const Generator& generator)
     {
         for (auto& row : data)
         {
