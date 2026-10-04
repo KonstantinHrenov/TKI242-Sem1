@@ -20,7 +20,7 @@ namespace miit::algebra {
          * @brief Сгенерировать очередное значение
          * @return сгенерированное значение
          */
-        virtual int generate() = 0;
+        virtual int generate() const = 0;
     };
 
 } // namespace miit::algebra
