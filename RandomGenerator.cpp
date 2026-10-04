@@ -8,7 +8,7 @@ namespace miit::algebra {
         this->distribution = std::uniform_int_distribution<int>(min, max);
     }
 
-    int RandomGenerator::generate()
+    int RandomGenerator::generate() const
     {
         return this->distribution(this->generator);
     }
