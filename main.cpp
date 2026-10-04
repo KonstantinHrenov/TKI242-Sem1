@@ -9,6 +9,15 @@
 
 using namespace miit::algebra;
 
+/**
+ * @brief Способ заполнения матрицы
+ */
+enum class FillMethod {
+    Random = 1,
+    Manual = 2,
+    Constant = 3
+};
+
 int main()
 {
     setlocale(LC_ALL, "Russian");
@@ -18,25 +27,26 @@ int main()
     std::cin >> n >> m;
 
     std::cout << "Выберите способ заполнения:\n"
-        << "1 - случайными числами\n"
-        << "2 - с клавиатуры\n"
-        << "3 - константой\n"
-        << "Ваш выбор: ";
+              << static_cast<int>(FillMethod::Random)   << " - случайными числами\n"
+              << static_cast<int>(FillMethod::Manual)   << " - с клавиатуры\n"
+              << static_cast<int>(FillMethod::Constant) << " - константой\n"
+              << "Ваш выбор: ";
 
-    int choice = 0;
-    std::cin >> choice;
+    int input = 0;
+    std::cin >> input;
+    const auto choice = static_cast<FillMethod>(input);
 
     std::unique_ptr<Generator> generator;
 
     switch (choice)
     {
-    case 1:
+    case FillMethod::Random:
         generator = std::make_unique<RandomGenerator>(-100, 100);
         break;
-    case 2:
+    case FillMethod::Manual:
         generator = std::make_unique<IStreamGenerator>(std::cin);
         break;
-    case 3:
+    case FillMethod::Constant:
     {
         int value = 0;
         std::cout << "Введите константу: ";
@@ -56,12 +66,12 @@ int main()
     Task1 task1(matrix);
     task1.solve();
     std::cout << "\nПосле Задания 1 (мин. элемент каждой строки -> 0):\n"
-        << matrix.toString();
+              << matrix.toString();
 
     Task2 task2(matrix);
     task2.solve();
     std::cout << "\nПосле Задания 2 (удалены столбцы с нечётным положительным):\n"
-        << matrix.toString();
+              << matrix.toString();
 
     return 0;
 }
