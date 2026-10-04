@@ -1,15 +1,17 @@
-#include "ConstantGenerator.h"
+#include "IStreamGenerator.h"
 
 namespace miit::algebra {
 
-    ConstantGenerator::ConstantGenerator(const int value)
-        : value{ value }
+    IStreamGenerator::IStreamGenerator(std::istream& in)
+        : in{ in }
     {
     }
 
-    int ConstantGenerator::generate() const
+    int IStreamGenerator::generate()
     {
-        return this->value;
+        int value = 0;
+        this->in >> value;
+        return value;
     }
 
 } // namespace miit::algebra
