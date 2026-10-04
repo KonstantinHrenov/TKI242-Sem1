@@ -38,7 +38,7 @@ namespace miit::algebra {
          * @param cols Количество столбцов
          * @param generator Генератор
          */
-        Matrix(const std::size_t rows, const std::size_t cols, Generator& generator);
+        Matrix(const std::size_t rows, const std::size_t cols, const Generator& generator);
 
         /**
          * @brief Конструктор копирования
@@ -53,7 +53,7 @@ namespace miit::algebra {
         /**
          * @brief Деструктор
          */
-        ~Matrix();
+        ~Matrix() = default;
 
         /**
          * @brief Оператор копирующего присваивания
@@ -69,6 +69,7 @@ namespace miit::algebra {
          * @brief Доступ к строке по индексу
          * @param index Индекс строки
          * @return Ссылка на вектор строки
+         * @throws std::out_of_range если индекс вне диапазона
          */
         std::vector<T>& operator[](const std::size_t index);
 
@@ -76,6 +77,7 @@ namespace miit::algebra {
          * @brief Доступ к строке по индексу (константный)
          * @param index Индекс строки
          * @return Константная ссылка на вектор строки
+         * @throws std::out_of_range если индекс вне диапазона
          */
         const std::vector<T>& operator[](const std::size_t index) const;
 
@@ -105,7 +107,7 @@ namespace miit::algebra {
          * @brief Заполнить матрицу с помощью генератора
          * @param generator Генератор
          */
-        void fill(Generator& generator);
+        void fill(const Generator& generator);
 
         /**
          * @brief Строковое представление матрицы
