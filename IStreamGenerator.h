@@ -22,7 +22,7 @@ namespace miit::algebra {
          * @brief Считать значение из потока
          * @return Считанное значение
          */
-        int generate() override;
+        int generate() const override;
     };
 
 } // namespace miit::algebra
