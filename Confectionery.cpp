@@ -2,9 +2,9 @@
 #include "FormatUtils.h"
 
 Confectionery::Confectionery(std::string name, double pricePerKg, std::string category,
-    std::string kind, double producedKg)
+                             std::string kind, double producedKg)
     : Product(std::move(name), pricePerKg, std::move(category)),
-    kind_(std::move(kind)), producedKg_(producedKg) {
+      kind_(std::move(kind)), producedKg_(producedKg) {
 }
 
 const std::string& Confectionery::GetKind() const { return kind_; }
