@@ -2,9 +2,9 @@
 #include "FormatUtils.h"
 
 RawMaterial::RawMaterial(std::string name, double pricePerKg, std::string category,
-    std::string supplierName, double orderedKg)
+                         std::string supplierName, double orderedKg)
     : Product(std::move(name), pricePerKg, std::move(category)),
-    supplierName_(std::move(supplierName)), orderedKg_(orderedKg) {
+      supplierName_(std::move(supplierName)), orderedKg_(orderedKg) {
 }
 
 const std::string& RawMaterial::GetSupplierName() const { return supplierName_; }
