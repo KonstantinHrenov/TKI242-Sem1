@@ -1,3 +1,7 @@
+//
+// ConfectioneryTests.cpp
+// Модульные тесты для варианта "Кондитерская фабрика" (Google Test).
+//
 #include <gtest/gtest.h>
 #include <memory>
 #include <stdexcept>
@@ -6,8 +10,11 @@
 
 #include "ConfectioneryLib.h"
 
-// ===================== Date =====================
+// ===================== Тесты класса Date =====================
 
+/**
+ * @brief Parse корректно разбирает строку.
+ */
 TEST(DateTests, Parse_ValidIsoString_ReturnsCorrectComponents) {
     Date d = Date::Parse("2026-09-22");
     EXPECT_EQ(2026, d.GetYear());
@@ -15,6 +22,9 @@ TEST(DateTests, Parse_ValidIsoString_ReturnsCorrectComponents) {
     EXPECT_EQ(22, d.GetDay());
 }
 
+/**
+ * @brief Parse отклоняет неверный формат.
+ */
 TEST(DateTests, Parse_WrongFormat_ThrowsInvalidArgument) {
     EXPECT_THROW(Date::Parse("22-09-2026"), std::invalid_argument);
 }
@@ -116,7 +126,7 @@ TEST(DateTests, NonLeapYear_February29_Throws) {
     EXPECT_THROW({ Date invalid(2026, 2, 29); (void)invalid; }, std::invalid_argument);
 }
 
-// ===================== Product =====================
+// ===================== Тесты класса Product =====================
 
 TEST(ProductTests, GetName_ReturnsConstructorValue) {
     RawMaterial r("Мука", 45.0, "Сыпучее", "Мельница №1", 100.0);
@@ -165,7 +175,7 @@ TEST(ProductTests, GetInfo_IncludesPrice) {
     EXPECT_NE(std::string::npos, p->GetInfo().find("650.00"));
 }
 
-// ===================== RawMaterial =====================
+// ===================== Тесты RawMaterial =====================
 
 TEST(RawMaterialTests, GetKindName_ReturnsSyrye) {
     RawMaterial r("Мука", 45.0, "Сыпучее", "Мельница №1", 100.0);
@@ -201,7 +211,7 @@ TEST(RawMaterialTests, AddOrder_Zero_NoChange) {
     EXPECT_DOUBLE_EQ(100.0, r.GetOrderedKg());
 }
 
-// ===================== Confectionery =====================
+// ===================== Тесты Confectionery =====================
 
 TEST(ConfectioneryTests_, GetKindName_ReturnsGotovoe) {
     Confectionery c("Торт", 650.0, "Мучная", "Торт", 100.0);
@@ -252,7 +262,7 @@ TEST(ConfectioneryTests_, AddShop_ThreeTimes) {
     EXPECT_EQ(static_cast<size_t>(3), c.GetShops().size());
 }
 
-// ===================== Shop =====================
+// ===================== Тесты Shop =====================
 
 TEST(ShopTests, GetName_ReturnsConstructorValue) {
     Shop s("Пятёрочка", "ул. Ленина, 5");
@@ -277,7 +287,7 @@ TEST(ShopTests, DifferentShops_DifferentNames) {
     EXPECT_NE(a.GetName(), b.GetName());
 }
 
-// ===================== Sale =====================
+// ===================== Тесты Sale =====================
 
 TEST(SaleTests, GetProductName_ReturnsConstructorValue) {
     Sale s("Торт", Date(2026, 9, 20), 3, 1950.0);
@@ -322,9 +332,12 @@ TEST(SaleTests, ZeroQuantity_Allowed) {
     EXPECT_DOUBLE_EQ(0.0, s.GetTotalPrice());
 }
 
-// ===================== ConfectioneryFactory =====================
+// ===================== Тесты ConfectioneryFactory =====================
 
 namespace {
+    /**
+     * @brief Формирует тестовую фабрику.
+     */
     ConfectioneryFactory BuildSampleFactory() {
         ConfectioneryFactory factory("Тестовая фабрика");
         factory.AddProduct(std::make_shared<RawMaterial>("Мука", 45.0, "Сыпучее", "Мельница №1", 100.0));
@@ -506,13 +519,13 @@ TEST(ConfectioneryFactoryTests, GetTotalProductionCost_MatchesExpectedSum) {
 TEST(ConfectioneryFactoryTests, GetTotalProductionCost_DayAndYear_Same) {
     ConfectioneryFactory f = BuildSampleFactory();
     EXPECT_DOUBLE_EQ(f.GetTotalProductionCost(ProductionPeriod::Day),
-        f.GetTotalProductionCost(ProductionPeriod::Year));
+                     f.GetTotalProductionCost(ProductionPeriod::Year));
 }
 
 TEST(ConfectioneryFactoryTests, GetTotalProductionCost_AllPeriodsSame) {
     ConfectioneryFactory f = BuildSampleFactory();
     EXPECT_DOUBLE_EQ(f.GetTotalProductionCost(ProductionPeriod::Day),
-        f.GetTotalProductionCost(ProductionPeriod::Quarter));
+                     f.GetTotalProductionCost(ProductionPeriod::Quarter));
 }
 
 TEST(ConfectioneryFactoryTests, GetTotalProductionCost_Empty_ReturnsZero) {
