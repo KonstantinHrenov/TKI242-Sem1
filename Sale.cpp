@@ -3,7 +3,7 @@
 
 Sale::Sale(std::string productName, Date saleDate, int quantity, double totalPrice)
     : productName_(std::move(productName)), saleDate_(saleDate),
-    quantity_(quantity), totalPrice_(totalPrice) {
+      quantity_(quantity), totalPrice_(totalPrice) {
 }
 
 const std::string& Sale::GetProductName() const { return productName_; }
