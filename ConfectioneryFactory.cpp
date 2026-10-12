@@ -95,8 +95,8 @@ bool ConfectioneryFactory::IsWithinPeriod(const Date& saleDate, const Date& asOf
 }
 
 std::vector<Sale> ConfectioneryFactory::GetSalesForPeriod(const std::string& productName,
-    SalesPeriod period,
-    const Date& asOf) const {
+                                                          SalesPeriod period,
+                                                          const Date& asOf) const {
     std::vector<Sale> result;
     for (const auto& sale : sales_) {
         if (FormatUtils::EqualsIgnoreCase(sale.GetProductName(), productName) &&
@@ -108,16 +108,16 @@ std::vector<Sale> ConfectioneryFactory::GetSalesForPeriod(const std::string& pro
 }
 
 int ConfectioneryFactory::GetTotalQuantitySold(const std::string& productName,
-    SalesPeriod period,
-    const Date& asOf) const {
+                                                SalesPeriod period,
+                                                const Date& asOf) const {
     int total = 0;
     for (const auto& sale : GetSalesForPeriod(productName, period, asOf)) total += sale.GetQuantity();
     return total;
 }
 
 double ConfectioneryFactory::GetTotalRevenue(const std::string& productName,
-    SalesPeriod period,
-    const Date& asOf) const {
+                                              SalesPeriod period,
+                                              const Date& asOf) const {
     double total = 0.0;
     for (const auto& sale : GetSalesForPeriod(productName, period, asOf)) total += sale.GetTotalPrice();
     return total;
