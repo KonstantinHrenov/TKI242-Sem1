@@ -3,14 +3,25 @@
 #include <cstdlib>
 
 namespace {
+    /**
+     * @brief Возвращает true, если year - високосный год.
+     */
     bool IsLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
+
+    /**
+     * @brief Возвращает количество дней в месяце.
+     */
     int DaysInMonth(int year, int month) {
         static const int days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
         if (month == 2 && IsLeapYear(year)) return 29;
         return days[month - 1];
     }
+
+    /**
+     * @brief Переводит дату в количество дней относительно 1970-01-01.
+     */
     long DaysFromCivil(int y, unsigned m, unsigned d) {
         y -= m <= 2;
         const long era = (y >= 0 ? y : y - 399) / 400;
@@ -56,7 +67,7 @@ std::string Date::ToString() const {
         std::string s = std::to_string(value);
         if (s.size() < 2) s = "0" + s;
         return s;
-        };
+    };
     return std::to_string(year_) + "-" + pad2(month_) + "-" + pad2(day_);
 }
 
