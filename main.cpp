@@ -1,3 +1,7 @@
+//
+// main.cpp
+// Демонстрационная консольная программа для варианта "Кондитерская фабрика".
+//
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -14,6 +18,9 @@
 
 namespace {
 
+    /**
+     * @brief Пункты главного меню.
+     */
     enum class MainMenuChoice {
         Exit = 0,
         ShowShopsForProduct = 1,
@@ -26,18 +33,30 @@ namespace {
     };
 
 #ifdef _WIN32
+    /**
+     * @brief Переключает кодовые страницы консоли Windows в UTF-8.
+     */
     void EnableUtf8Console() {
         SetConsoleOutputCP(CP_UTF8);
         SetConsoleCP(CP_UTF8);
     }
 #endif
 
+    /**
+     * @brief Печатает горизонтальную разделительную линию.
+     */
     void PrintDivider() {
         std::cout << "------------------------------------------------------------\n";
     }
 
+    /**
+     * @brief Возвращает зафиксированную "текущую" дату.
+     */
     Date Today() { return Date(2026, 9, 22); }
 
+    /**
+     * @brief Формирует демонстрационную коллекцию товаров.
+     */
     std::vector<std::shared_ptr<Product>> CreateDemoProducts() {
         std::vector<std::shared_ptr<Product>> products;
 
@@ -68,6 +87,9 @@ namespace {
         return products;
     }
 
+    /**
+     * @brief Формирует демонстрационную фабрику с продажами.
+     */
     ConfectioneryFactory CreateDemoFactory(const std::vector<std::shared_ptr<Product>>& products) {
         ConfectioneryFactory factory("ОАО «Сладкий мир»");
         for (const auto& product : products) factory.AddProduct(product);
@@ -85,6 +107,9 @@ namespace {
         return factory;
     }
 
+    /**
+     * @brief Печатает все товары полиморфным обходом.
+     */
     void PrintAllProducts(const std::vector<std::shared_ptr<Product>>& products) {
         PrintDivider();
         std::cout << "Задание 1. Данные о товарах (полиморфный обход):\n";
@@ -92,6 +117,9 @@ namespace {
         for (const auto& product : products) std::cout << product->GetInfo() << "\n";
     }
 
+    /**
+     * @brief Обработчик задания 1: магазины, заказывающие товар.
+     */
     void ShowShopsForProduct(const ConfectioneryFactory& factory) {
         std::cout << "Введите название товара: ";
         std::string name;
@@ -103,6 +131,9 @@ namespace {
         else for (const auto& shop : shops) std::cout << "  • " << shop << "\n";
     }
 
+    /**
+     * @brief Обработчик задания 2: продукты у поставщика.
+     */
     void ShowProductsBySupplier(const ConfectioneryFactory& factory) {
         std::cout << "Введите имя поставщика: ";
         std::string supplier;
@@ -114,6 +145,9 @@ namespace {
         else for (const auto& p : found) std::cout << "  " << p->GetInfo() << "\n";
     }
 
+    /**
+     * @brief Обработчик задания 3: ассортимент по категории.
+     */
     void ShowAssortmentByCategory(const ConfectioneryFactory& factory) {
         std::cout << "Введите категорию товара: ";
         std::string category;
@@ -125,11 +159,17 @@ namespace {
         else for (const auto& p : found) std::cout << "  " << p->GetInfo() << "\n";
     }
 
+    /**
+     * @brief Обработчик задания 4: популярный вид товара.
+     */
     void ShowMostPopularKind(const ConfectioneryFactory& factory) {
         PrintDivider();
         std::cout << "Наиболее популярный вид товара: " << factory.GetMostPopularKind() << "\n";
     }
 
+    /**
+     * @brief Запрашивает у пользователя период производства.
+     */
     ProductionPeriod AskProductionPeriod() {
         std::cout << "Выберите период (1 - день, 2 - неделя, 3 - месяц, 4 - квартал, 5 - год): ";
         int choice = 0;
@@ -145,6 +185,9 @@ namespace {
         }
     }
 
+    /**
+     * @brief Обработчик задания 5: стоимость произведённого.
+     */
     void ShowProductionCost(const ConfectioneryFactory& factory) {
         const auto period = AskProductionPeriod();
         PrintDivider();
@@ -153,6 +196,9 @@ namespace {
             << " руб.\n";
     }
 
+    /**
+     * @brief Обработчик отчёта о продажах за месяц.
+     */
     void ShowSalesReport(const ConfectioneryFactory& factory) {
         std::cout << "Введите название товара: ";
         std::string name;
@@ -174,12 +220,18 @@ namespace {
             << " руб.\n";
     }
 
+    /**
+     * @brief Печатает список магазинов.
+     */
     void ShowShopsList(const ConfectioneryFactory& factory) {
         PrintDivider();
         std::cout << "Магазины фабрики:\n";
         for (const auto& s : factory.GetAllShops()) std::cout << "  " << s.GetInfo() << "\n";
     }
 
+    /**
+     * @brief Печатает главное меню.
+     */
     void PrintMenu() {
         PrintDivider();
         std::cout << static_cast<int>(MainMenuChoice::ShowShopsForProduct) << " - Магазины, заказывающие товар (Задание 1)\n";
@@ -194,6 +246,9 @@ namespace {
     }
 }
 
+/**
+ * @brief Точка входа программы.
+ */
 int main() {
 #ifdef _WIN32
     EnableUtf8Console();
@@ -213,7 +268,7 @@ int main() {
         switch (static_cast<MainMenuChoice>(choice)) {
         case MainMenuChoice::ShowShopsForProduct:      ShowShopsForProduct(factory);     break;
         case MainMenuChoice::ShowProductsBySupplier:   ShowProductsBySupplier(factory);  break;
-        case MainMenuChoice::ShowAssortmentByCategory: ShowAssortmentByCategory(factory); break;
+        case MainMenuChoice::ShowAssortmentByCategory: ShowAssortmentByCategory(factory);break;
         case MainMenuChoice::ShowMostPopularKind:      ShowMostPopularKind(factory);     break;
         case MainMenuChoice::ShowProductionCost:       ShowProductionCost(factory);      break;
         case MainMenuChoice::ShowSalesReport:          ShowSalesReport(factory);         break;
