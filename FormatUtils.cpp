@@ -3,6 +3,9 @@
 #include <cmath>
 
 namespace {
+    /**
+     * @brief Таблица "заглавная -> строчная" для русского алфавита.
+     */
     const std::pair<std::string, std::string> kCyrillicUpperToLower[] = {
         {"А", "а"}, {"Б", "б"}, {"В", "в"}, {"Г", "г"}, {"Д", "д"},
         {"Е", "е"}, {"Ж", "ж"}, {"З", "з"}, {"И", "и"}, {"Й", "й"},
@@ -13,6 +16,9 @@ namespace {
         {"Ю", "ю"}, {"Я", "я"}, {"Ё", "ё"},
     };
 
+    /**
+     * @brief Ищет заглавную русскую букву в позиции pos.
+     */
     const std::string* FindCyrillicLowerCase(const std::string& s, size_t pos) {
         for (const auto& pair : kCyrillicUpperToLower) {
             const std::string& upper = pair.first;
@@ -21,6 +27,9 @@ namespace {
         return nullptr;
     }
 
+    /**
+     * @brief Приводит строку в UTF-8 к нижнему регистру.
+     */
     std::string ToLower(const std::string& s) {
         std::string result;
         result.reserve(s.size());
@@ -35,8 +44,7 @@ namespace {
             if (const std::string* const lower = FindCyrillicLowerCase(s, pos)) {
                 result += *lower;
                 pos += lower->size();
-            }
-            else {
+            } else {
                 result += static_cast<char>(byte);
                 ++pos;
             }
@@ -46,6 +54,7 @@ namespace {
 }
 
 namespace FormatUtils {
+
     std::string FormatDecimal(double value) {
         const bool negative = value < 0.0;
         const double absValue = negative ? -value : value;
@@ -56,7 +65,11 @@ namespace FormatUtils {
         return sign + std::to_string(whole) + "." +
             (frac < 10 ? "0" : "") + std::to_string(frac);
     }
-    std::string FormatMoney(double value) { return FormatDecimal(value); }
+
+    std::string FormatMoney(double value) {
+        return FormatDecimal(value);
+    }
+
     bool EqualsIgnoreCase(const std::string& a, const std::string& b) {
         return ToLower(a) == ToLower(b);
     }
