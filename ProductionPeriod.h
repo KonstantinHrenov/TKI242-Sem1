@@ -1,6 +1,13 @@
 #pragma once
+//
+// ProductionPeriod.h
+// Период, за который запрашивается отчёт о производстве.
+//
 #include <string>
 
+/**
+ * @brief Временное окно для отчёта о производстве.
+ */
 enum class ProductionPeriod {
     Day,
     Week,
@@ -9,6 +16,9 @@ enum class ProductionPeriod {
     Year
 };
 
+/**
+ * @brief Возвращает русское название периода.
+ */
 inline std::string ProductionPeriodName(ProductionPeriod period) {
     switch (period) {
     case ProductionPeriod::Day:     return "день";
