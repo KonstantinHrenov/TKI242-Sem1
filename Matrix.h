@@ -20,125 +20,150 @@ namespace miit::algebra {
         std::size_t cols;
 
     public:
-        /**
-         * @brief Конструктор по умолчанию
-         */
-        Matrix();
+        Matrix()
+            : data{}, rows{ 0 }, cols{ 0 }
+        {
+        }
 
-        /**
-         * @brief Конструктор с размером
-         * @param rows Количество строк
-         * @param cols Количество столбцов
-         */
-        Matrix(const std::size_t rows, const std::size_t cols);
+        Matrix(const std::size_t rows, const std::size_t cols)
+            : data(rows, std::vector<T>(cols)), rows{ rows }, cols{ cols }
+        {
+        }
 
-        /**
-         * @brief Конструктор с размером и генератором
-         * @param rows Количество строк
-         * @param cols Количество столбцов
-         * @param generator Генератор
-         */
-        Matrix(const std::size_t rows, const std::size_t cols, const Generator& generator);
+        Matrix(const std::size_t rows, const std::size_t cols, const Generator& generator)
+            : Matrix(rows, cols)
+        {
+            fill(generator);
+        }
 
-        /**
-         * @brief Конструктор копирования
-         */
-        Matrix(const Matrix& other);
-
-        /**
-         * @brief Конструктор перемещения
-         */
-        Matrix(Matrix&& other) noexcept;
-
-        /**
-         * @brief Деструктор
-         */
+        Matrix(const Matrix& other) = default;
+        Matrix(Matrix&& other) noexcept = default;
         ~Matrix() = default;
 
-        /**
-         * @brief Оператор копирующего присваивания
-         */
-        Matrix& operator=(const Matrix& other);
+        Matrix& operator=(const Matrix& other) = default;
+        Matrix& operator=(Matrix&& other) noexcept = default;
 
-        /**
-         * @brief Оператор перемещающего присваивания
-         */
-        Matrix& operator=(Matrix&& other) noexcept;
+        std::vector<T>& operator[](const std::size_t index)
+        {
+            if (index >= data.size())
+            {
+                throw std::out_of_range("Row index out of range");
+            }
+            return data[index];
+        }
 
-        /**
-         * @brief Доступ к строке по индексу
-         * @param index Индекс строки
-         * @return Ссылка на вектор строки
-         * @throws std::out_of_range если индекс вне диапазона
-         */
-        std::vector<T>& operator[](const std::size_t index);
+        const std::vector<T>& operator[](const std::size_t index) const
+        {
+            if (index >= data.size())
+            {
+                throw std::out_of_range("Row index out of range");
+            }
+            return data[index];
+        }
 
-        /**
-         * @brief Доступ к строке по индексу (константный)
-         * @param index Индекс строки
-         * @return Константная ссылка на вектор строки
-         * @throws std::out_of_range если индекс вне диапазона
-         */
-        const std::vector<T>& operator[](const std::size_t index) const;
+        Matrix& operator<<(const std::size_t shift)
+        {
+            if (cols == 0) return *this;
+            const std::size_t s = shift % cols;
+            for (auto& row : data)
+            {
+                std::rotate(row.begin(), row.begin() + s, row.end());
+            }
+            return *this;
+        }
 
-        /**
-         * @brief Циклический сдвиг строк влево
-         * @param shift Величина сдвига
-         */
-        Matrix& operator<<(const std::size_t shift);
+        Matrix& operator>>(const std::size_t shift)
+        {
+            if (cols == 0) return *this;
+            const std::size_t s = shift % cols;
+            for (auto& row : data)
+            {
+                std::rotate(row.begin(), row.end() - s, row.end());
+            }
+            return *this;
+        }
 
-        /**
-         * @brief Циклический сдвиг строк вправо
-         * @param shift Величина сдвига
-         */
-        Matrix& operator>>(const std::size_t shift);
+        std::size_t getRows() const noexcept { return rows; }
+        std::size_t getCols() const noexcept { return cols; }
 
-        /**
-         * @brief Количество строк
-         */
-        std::size_t getRows() const noexcept;
+        void fill(const Generator& generator)
+        {
+            for (auto& row : data)
+            {
+                for (auto& element : row)
+                {
+                    element = static_cast<T>(generator.generate());
+                }
+            }
+        }
 
-        /**
-         * @brief Количество столбцов
-         */
-        std::size_t getCols() const noexcept;
+        std::string toString() const
+        {
+            std::ostringstream out;
+            for (const auto& row : data)
+            {
+                for (const auto& element : row)
+                {
+                    out << element << ' ';
+                }
+                out << '\n';
+            }
+            return out.str();
+        }
 
-        /**
-         * @brief Заполнить матрицу с помощью генератора
-         * @param generator Генератор
-         */
-        void fill(const Generator& generator);
+        void insertRow(const std::size_t index, const std::vector<T>& row)
+        {
+            if (row.size() != cols)
+            {
+                throw std::invalid_argument("Row size mismatch");
+            }
+            if (index > data.size())
+            {
+                throw std::out_of_range("Row index out of range");
+            }
+            data.insert(data.begin() + index, row);
+            ++rows;
+        }
 
-        /**
-         * @brief Строковое представление матрицы
-         */
-        std::string toString() const;
+        void removeRow(const std::size_t index)
+        {
+            if (index >= data.size())
+            {
+                throw std::out_of_range("Row index out of range");
+            }
+            data.erase(data.begin() + index);
+            --rows;
+        }
 
-        /**
-         * @brief Вставить строку
-         * @param index Индекс
-         * @param row Строка
-         */
-        void insertRow(const std::size_t index, const std::vector<T>& row);
+        void insertCol(const std::size_t index, const std::vector<T>& col)
+        {
+            if (col.size() != rows)
+            {
+                throw std::invalid_argument("Col size mismatch");
+            }
+            if (index > cols)
+            {
+                throw std::out_of_range("Col index out of range");
+            }
+            for (std::size_t i = 0; i < rows; ++i)
+            {
+                data[i].insert(data[i].begin() + index, col[i]);
+            }
+            ++cols;
+        }
 
-        /**
-         * @brief Удалить строку
-         * @param index Индекс
-         */
-        void removeRow(const std::size_t index);
-
-        /**
-         * @brief Вставить столбец
-         * @param index Индекс
-         * @param col Столбец
-         */
-        void insertCol(const std::size_t index, const std::vector<T>& col);
-
-        /**
-         * @brief Удалить столбец
-         * @param index Индекс
-         */
-        void removeCol(const std::size_t index);
+        void removeCol(const std::size_t index)
+        {
+            if (index >= cols)
+            {
+                throw std::out_of_range("Col index out of range");
+            }
+            for (auto& row : data)
+            {
+                row.erase(row.begin() + index);
+            }
+            --cols;
+        }
     };
 
 } // namespace miit::algebra
