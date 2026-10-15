@@ -36,7 +36,7 @@ namespace miit::algebra {
     template <typename T>
     std::vector<T>& Matrix<T>::operator[](const std::size_t index)
     {
-        if (index >= rows)
+        if (index >= data.size())
         {
             throw std::out_of_range("Row index out of range");
         }
@@ -46,7 +46,7 @@ namespace miit::algebra {
     template <typename T>
     const std::vector<T>& Matrix<T>::operator[](const std::size_t index) const
     {
-        if (index >= rows)
+        if (index >= data.size())
         {
             throw std::out_of_range("Row index out of range");
         }
@@ -123,7 +123,7 @@ namespace miit::algebra {
         {
             throw std::invalid_argument("Row size mismatch");
         }
-        if (index > rows)
+        if (index > data.size())
         {
             throw std::out_of_range("Row index out of range");
         }
@@ -134,7 +134,7 @@ namespace miit::algebra {
     template <typename T>
     void Matrix<T>::removeRow(const std::size_t index)
     {
-        if (index >= rows)
+        if (index >= data.size())
         {
             throw std::out_of_range("Row index out of range");
         }
