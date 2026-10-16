@@ -15,34 +15,90 @@ namespace miit::algebra {
     template <typename T>
     class Matrix {
     private:
+        /**
+         * @brief Данные матрицы — вектор строк
+         */
         std::vector<std::vector<T>> data;
+
+        /**
+         * @brief Количество строк
+         */
         std::size_t rows;
+
+        /**
+         * @brief Количество столбцов
+         */
         std::size_t cols;
 
     public:
+        /**
+         * @brief Конструктор по умолчанию. Создаёт пустую матрицу 0x0
+         */
         Matrix()
             : data{}, rows{ 0 }, cols{ 0 }
         {
         }
 
+        /**
+         * @brief Конструктор с заданным размером
+         * @param rows Количество строк
+         * @param cols Количество столбцов
+         * @note Элементы инициализируются значением по умолчанию T()
+         */
         Matrix(const std::size_t rows, const std::size_t cols)
             : data(rows, std::vector<T>(cols)), rows{ rows }, cols{ cols }
         {
         }
 
+        /**
+         * @brief Конструктор с размером и генератором
+         * @param rows Количество строк
+         * @param cols Количество столбцов
+         * @param generator Генератор для заполнения матрицы
+         */
         Matrix(const std::size_t rows, const std::size_t cols, const Generator& generator)
             : Matrix(rows, cols)
         {
             fill(generator);
         }
 
+        /**
+         * @brief Конструктор копирования
+         * @param other Матрица для копирования
+         */
         Matrix(const Matrix& other) = default;
+
+        /**
+         * @brief Конструктор перемещения
+         * @param other Матрица для перемещения
+         */
         Matrix(Matrix&& other) noexcept = default;
+
+        /**
+         * @brief Деструктор
+         */
         ~Matrix() = default;
 
+        /**
+         * @brief Оператор копирующего присваивания
+         * @param other Матрица для копирования
+         * @return Ссылка на текущий объект
+         */
         Matrix& operator=(const Matrix& other) = default;
+
+        /**
+         * @brief Оператор перемещающего присваивания
+         * @param other Матрица для перемещения
+         * @return Ссылка на текущий объект
+         */
         Matrix& operator=(Matrix&& other) noexcept = default;
 
+        /**
+         * @brief Доступ к строке матрицы по индексу (неконстантный)
+         * @param index Индекс строки
+         * @return Ссылка на вектор строки
+         * @throws std::out_of_range если индекс вне допустимого диапазона
+         */
         std::vector<T>& operator[](const std::size_t index)
         {
             if (index >= data.size())
@@ -52,6 +108,12 @@ namespace miit::algebra {
             return data[index];
         }
 
+        /**
+         * @brief Доступ к строке матрицы по индексу (константный)
+         * @param index Индекс строки
+         * @return Константная ссылка на вектор строки
+         * @throws std::out_of_range если индекс вне допустимого диапазона
+         */
         const std::vector<T>& operator[](const std::size_t index) const
         {
             if (index >= data.size())
@@ -61,6 +123,11 @@ namespace miit::algebra {
             return data[index];
         }
 
+        /**
+         * @brief Циклический сдвиг каждой строки влево
+         * @param shift Величина сдвига
+         * @return Ссылка на текущий объект
+         */
         Matrix& operator<<(const std::size_t shift)
         {
             if (cols == 0) return *this;
@@ -72,6 +139,11 @@ namespace miit::algebra {
             return *this;
         }
 
+        /**
+         * @brief Циклический сдвиг каждой строки вправо
+         * @param shift Величина сдвига
+         * @return Ссылка на текущий объект
+         */
         Matrix& operator>>(const std::size_t shift)
         {
             if (cols == 0) return *this;
@@ -83,9 +155,28 @@ namespace miit::algebra {
             return *this;
         }
 
-        std::size_t getRows() const noexcept { return rows; }
-        std::size_t getCols() const noexcept { return cols; }
+        /**
+         * @brief Получить количество строк в матрице
+         * @return Количество строк
+         */
+        std::size_t getRows() const noexcept
+        {
+            return rows;
+        }
 
+        /**
+         * @brief Получить количество столбцов в матрице
+         * @return Количество столбцов
+         */
+        std::size_t getCols() const noexcept
+        {
+            return cols;
+        }
+
+        /**
+         * @brief Заполнить матрицу с помощью генератора
+         * @param generator Генератор значений
+         */
         void fill(const Generator& generator)
         {
             for (auto& row : data)
@@ -97,6 +188,10 @@ namespace miit::algebra {
             }
         }
 
+        /**
+         * @brief Преобразовать матрицу в строку
+         * @return Строковое представление матрицы
+         */
         std::string toString() const
         {
             std::ostringstream out;
@@ -111,6 +206,13 @@ namespace miit::algebra {
             return out.str();
         }
 
+        /**
+         * @brief Вставить строку по указанному индексу
+         * @param index Индекс, куда вставить строку
+         * @param row Вставляемая строка
+         * @throws std::invalid_argument если размер строки не совпадает с количеством столбцов
+         * @throws std::out_of_range если индекс вне допустимого диапазона
+         */
         void insertRow(const std::size_t index, const std::vector<T>& row)
         {
             if (row.size() != cols)
@@ -125,6 +227,11 @@ namespace miit::algebra {
             ++rows;
         }
 
+        /**
+         * @brief Удалить строку по указанному индексу
+         * @param index Индекс строки
+         * @throws std::out_of_range если индекс вне допустимого диапазона
+         */
         void removeRow(const std::size_t index)
         {
             if (index >= data.size())
@@ -135,6 +242,13 @@ namespace miit::algebra {
             --rows;
         }
 
+        /**
+         * @brief Вставить столбец по указанному индексу
+         * @param index Индекс, куда вставить столбец
+         * @param col Вставляемый столбец
+         * @throws std::invalid_argument если размер столбца не совпадает с количеством строк
+         * @throws std::out_of_range если индекс вне допустимого диапазона
+         */
         void insertCol(const std::size_t index, const std::vector<T>& col)
         {
             if (col.size() != rows)
@@ -152,6 +266,11 @@ namespace miit::algebra {
             ++cols;
         }
 
+        /**
+         * @brief Удалить столбец по указанному индексу
+         * @param index Индекс столбца
+         * @throws std::out_of_range если индекс вне допустимого диапазона
+         */
         void removeCol(const std::size_t index)
         {
             if (index >= cols)
