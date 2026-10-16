@@ -15,8 +15,8 @@ public:
     /**
      * @brief Создаёт готовое изделие.
      */
-    Confectionery(std::string name, double pricePerKg, std::string category,
-                  std::string kind, double producedKg);
+    Confectionery(const std::string name, const double pricePerKg, const std::string category,
+              const std::string kind, const double producedKg);
 
     /**
      * @brief Возвращает вид изделия ("Торт", "Печенье" и т.д.).
@@ -41,7 +41,7 @@ public:
     /**
      * @brief Увеличивает произведённое количество.
      */
-    void AddProduction(double kg);
+    void AddProduction(const double kg);
 
     /**
      * @brief Возвращает название вида: "Готовое изделие".
