@@ -6,14 +6,14 @@ namespace {
     /**
      * @brief Возвращает true, если year - високосный год.
      */
-    bool IsLeapYear(int year) {
+    bool IsLeapYear(const int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
 
     /**
      * @brief Возвращает количество дней в месяце.
      */
-    int DaysInMonth(int year, int month) {
+    int DaysInMonth(const int year, const int month) {
         static const int days[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
         if (month == 2 && IsLeapYear(year)) return 29;
         return days[month - 1];
@@ -32,14 +32,14 @@ namespace {
     }
 }
 
-void Date::Validate(int year, int month, int day) {
+void Date::Validate(const int year, const int month, const int day) {
     if (month < 1 || month > 12)
         throw std::invalid_argument("Date: месяц должен быть в диапазоне 1..12");
     if (day < 1 || day > DaysInMonth(year, month))
         throw std::invalid_argument("Date: некорректный день для указанного месяца/года");
 }
 
-Date::Date(int year, int month, int day)
+Date::Date(const int year, const int month, const int day)
     : year_(year), month_(month), day_(day) {
     Validate(year_, month_, day_);
 }

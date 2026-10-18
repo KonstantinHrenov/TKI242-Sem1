@@ -4,13 +4,14 @@
 //
 #include <iostream>
 #include <limits>
-#include <memory>
 #include <string>
 #include <vector>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <Windows.h>
 #endif
 
@@ -57,29 +58,29 @@ namespace {
     /**
      * @brief Формирует демонстрационную коллекцию товаров.
      */
-    std::vector<std::shared_ptr<Product>> CreateDemoProducts() {
-        std::vector<std::shared_ptr<Product>> products;
+    std::vector<Product*> CreateDemoProducts() {
+        std::vector<Product*> products;
 
-        products.push_back(std::make_shared<RawMaterial>(
+        products.push_back(new RawMaterial(
             "Мука пшеничная", 45.0, "Сыпучее", "Мельница №1", 5000.0));
-        products.push_back(std::make_shared<RawMaterial>(
+        products.push_back(new RawMaterial(
             "Сахар-песок", 62.0, "Сыпучее", "СахарПром", 3000.0));
-        products.push_back(std::make_shared<RawMaterial>(
+        products.push_back(new RawMaterial(
             "Какао-порошок", 780.0, "Сыпучее", "СахарПром", 200.0));
 
-        auto cake = std::make_shared<Confectionery>(
+        auto* cake = new Confectionery(
             "Торт «Прага»", 650.0, "Мучная", "Торт", 250.0);
         cake->AddShop("Пятёрочка");
         cake->AddShop("Магнит");
         products.push_back(cake);
 
-        auto cookies = std::make_shared<Confectionery>(
+        auto* cookies = new Confectionery(
             "Печенье «Юбилейное»", 320.0, "Мучная", "Печенье", 1800.0);
         cookies->AddShop("Ашан");
         cookies->AddShop("Пятёрочка");
         products.push_back(cookies);
 
-        auto chocolate = std::make_shared<Confectionery>(
+        auto* chocolate = new Confectionery(
             "Шоколад «Горький»", 890.0, "Шоколадная", "Шоколад", 700.0);
         chocolate->AddShop("Ашан");
         products.push_back(chocolate);
@@ -90,7 +91,7 @@ namespace {
     /**
      * @brief Формирует демонстрационную фабрику с продажами.
      */
-    ConfectioneryFactory CreateDemoFactory(const std::vector<std::shared_ptr<Product>>& products) {
+    ConfectioneryFactory CreateDemoFactory(const std::vector<Product*>& products) {
         ConfectioneryFactory factory("ОАО «Сладкий мир»");
         for (const auto& product : products) factory.AddProduct(product);
 
@@ -110,7 +111,7 @@ namespace {
     /**
      * @brief Печатает все товары полиморфным обходом.
      */
-    void PrintAllProducts(const std::vector<std::shared_ptr<Product>>& products) {
+    void PrintAllProducts(const std::vector<Product*>& products) {
         PrintDivider();
         std::cout << "Задание 1. Данные о товарах (полиморфный обход):\n";
         PrintDivider();
@@ -171,17 +172,22 @@ namespace {
      * @brief Запрашивает у пользователя период производства.
      */
     ProductionPeriod AskProductionPeriod() {
-        std::cout << "Выберите период (1 - день, 2 - неделя, 3 - месяц, 4 - квартал, 5 - год): ";
+        std::cout << "Выберите период ("
+            << static_cast<int>(ProductionPeriod::Day) << " - день, "
+            << static_cast<int>(ProductionPeriod::Week) << " - неделя, "
+            << static_cast<int>(ProductionPeriod::Month) << " - месяц, "
+            << static_cast<int>(ProductionPeriod::Quarter) << " - квартал, "
+            << static_cast<int>(ProductionPeriod::Year) << " - год): ";
         int choice = 0;
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        switch (choice) {
-        case 1: return ProductionPeriod::Day;
-        case 2: return ProductionPeriod::Week;
-        case 3: return ProductionPeriod::Month;
-        case 4: return ProductionPeriod::Quarter;
-        case 5: return ProductionPeriod::Year;
-        default: return ProductionPeriod::Month;
+        switch (static_cast<ProductionPeriod>(choice)) {
+        case ProductionPeriod::Day:     return ProductionPeriod::Day;
+        case ProductionPeriod::Week:    return ProductionPeriod::Week;
+        case ProductionPeriod::Month:   return ProductionPeriod::Month;
+        case ProductionPeriod::Quarter: return ProductionPeriod::Quarter;
+        case ProductionPeriod::Year:    return ProductionPeriod::Year;
+        default:                        return ProductionPeriod::Month;
         }
     }
 
@@ -253,7 +259,7 @@ int main() {
 #ifdef _WIN32
     EnableUtf8Console();
 #endif
-    const std::vector<std::shared_ptr<Product>> products = CreateDemoProducts();
+    const std::vector<Product*> products = CreateDemoProducts();
     const ConfectioneryFactory factory = CreateDemoFactory(products);
 
     std::cout << "=== " << factory.GetName() << " ===\n";
@@ -278,5 +284,10 @@ int main() {
         }
     }
     std::cout << "Работа программы завершена.\n";
+
+    for (Product* p : products) {
+        delete p;
+    }
+
     return 0;
 }

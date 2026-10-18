@@ -9,17 +9,22 @@
  * @brief Временное окно для отчёта о производстве.
  */
 enum class ProductionPeriod {
-    Day,
-    Week,
-    Month,
-    Quarter,
-    Year
+    /** @brief День. */
+    Day = 1,
+    /** @brief Неделя. */
+    Week = 2,
+    /** @brief Месяц. */
+    Month = 3,
+    /** @brief Квартал. */
+    Quarter = 4,
+    /** @brief Год. */
+    Year = 5
 };
 
 /**
  * @brief Возвращает русское название периода.
  */
-inline std::string ProductionPeriodName(ProductionPeriod period) {
+inline std::string ProductionPeriodName(const ProductionPeriod period) {
     switch (period) {
     case ProductionPeriod::Day:     return "день";
     case ProductionPeriod::Week:    return "неделю";

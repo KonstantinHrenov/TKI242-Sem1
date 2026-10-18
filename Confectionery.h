@@ -16,7 +16,7 @@ public:
      * @brief Создаёт готовое изделие.
      */
     Confectionery(const std::string name, const double pricePerKg, const std::string category,
-              const std::string kind, const double producedKg);
+                  const std::string kind, const double producedKg);
 
     /**
      * @brief Возвращает вид изделия ("Торт", "Печенье" и т.д.).
@@ -55,7 +55,10 @@ protected:
     std::string GetSpecificInfo() const override;
 
 private:
+    /** @brief Вид кондитерского изделия. */
     std::string kind_;
+    /** @brief Список магазинов-получателей. */
     std::vector<std::string> shops_;
-    double producedKg_ = 0.0;
+    /** @brief Произведённое количество (кг). */
+    double producedKg_;
 };

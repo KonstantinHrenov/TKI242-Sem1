@@ -13,7 +13,7 @@ public:
     /**
      * @brief Создаёт магазин с именем и адресом.
      */
-    Shop(std::string name, std::string address);
+    Shop(const std::string name, const std::string address);
 
     /**
      * @brief Возвращает название магазина.
@@ -31,6 +31,8 @@ public:
     std::string GetInfo() const;
 
 private:
+    /** @brief Название магазина. */
     std::string name_;
+    /** @brief Адрес магазина. */
     std::string address_;
 };

@@ -1,8 +1,8 @@
 #include "Sale.h"
 #include "FormatUtils.h"
 
-Sale::Sale(std::string productName, Date saleDate, int quantity, double totalPrice)
-    : productName_(std::move(productName)), saleDate_(saleDate),
+Sale::Sale(const std::string productName, const Date saleDate, const int quantity, const double totalPrice)
+    : productName_(productName), saleDate_(saleDate),
       quantity_(quantity), totalPrice_(totalPrice) {
 }
 

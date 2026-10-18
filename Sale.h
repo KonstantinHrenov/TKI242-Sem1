@@ -14,7 +14,7 @@ public:
     /**
      * @brief Создаёт запись о продаже.
      */
-    Sale(std::string productName, Date saleDate, int quantity, double totalPrice);
+    Sale(const std::string productName, const Date saleDate, const int quantity, const double totalPrice);
 
     /**
      * @brief Возвращает название проданного товара.
@@ -42,8 +42,12 @@ public:
     std::string GetInfo() const;
 
 private:
+    /** @brief Название товара. */
     std::string productName_;
+    /** @brief Дата совершения продажи. */
     Date saleDate_;
-    int quantity_ = 0;
-    double totalPrice_ = 0.0;
+    /** @brief Количество проданных единиц. */
+    int quantity_;
+    /** @brief Общая сумма продажи. */
+    double totalPrice_;
 };

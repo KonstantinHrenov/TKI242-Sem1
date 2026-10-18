@@ -10,12 +10,12 @@ namespace FormatUtils {
     /**
      * @brief Форматирует дробное число как денежную сумму.
      */
-    std::string FormatMoney(double value);
+    std::string FormatMoney(const double value);
 
     /**
      * @brief Форматирует дробное число с двумя знаками после точки.
      */
-    std::string FormatDecimal(double value);
+    std::string FormatDecimal(const double value);
 
     /**
      * @brief Регистронезависимое сравнение двух строк в UTF-8.

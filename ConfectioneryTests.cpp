@@ -3,7 +3,6 @@
 // Модульные тесты для варианта "Кондитерская фабрика" (Google Test).
 //
 #include <gtest/gtest.h>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -156,22 +155,22 @@ TEST(ProductTests, SetPricePerKg_ZeroIsAllowed) {
 }
 
 TEST(ProductTests, GetInfo_IncludesNameAndKind) {
-    std::shared_ptr<Product> p = std::make_shared<Confectionery>(
-        "Торт «Прага»", 650.0, "Мучная", "Торт", 100.0);
+    Confectionery c("Торт «Прага»", 650.0, "Мучная", "Торт", 100.0);
+    const Product* p = &c;
     const std::string info = p->GetInfo();
     EXPECT_NE(std::string::npos, info.find("Торт «Прага»"));
     EXPECT_NE(std::string::npos, info.find("Готовое изделие"));
 }
 
 TEST(ProductTests, GetInfo_IncludesCategory) {
-    std::shared_ptr<Product> p = std::make_shared<Confectionery>(
-        "Торт", 650.0, "Мучная", "Торт", 100.0);
+    Confectionery c("Торт", 650.0, "Мучная", "Торт", 100.0);
+    const Product* p = &c;
     EXPECT_NE(std::string::npos, p->GetInfo().find("Мучная"));
 }
 
 TEST(ProductTests, GetInfo_IncludesPrice) {
-    std::shared_ptr<Product> p = std::make_shared<Confectionery>(
-        "Торт", 650.0, "Мучная", "Торт", 100.0);
+    Confectionery c("Торт", 650.0, "Мучная", "Торт", 100.0);
+    const Product* p = &c;
     EXPECT_NE(std::string::npos, p->GetInfo().find("650.00"));
 }
 
@@ -340,20 +339,20 @@ namespace {
      */
     ConfectioneryFactory BuildSampleFactory() {
         ConfectioneryFactory factory("Тестовая фабрика");
-        factory.AddProduct(std::make_shared<RawMaterial>("Мука", 45.0, "Сыпучее", "Мельница №1", 100.0));
-        factory.AddProduct(std::make_shared<RawMaterial>("Сахар", 62.0, "Сыпучее", "СахарПром", 50.0));
-        factory.AddProduct(std::make_shared<RawMaterial>("Какао", 780.0, "Сыпучее", "СахарПром", 20.0));
+        factory.AddProduct(new RawMaterial("Мука", 45.0, "Сыпучее", "Мельница №1", 100.0));
+        factory.AddProduct(new RawMaterial("Сахар", 62.0, "Сыпучее", "СахарПром", 50.0));
+        factory.AddProduct(new RawMaterial("Какао", 780.0, "Сыпучее", "СахарПром", 20.0));
 
-        auto cake = std::make_shared<Confectionery>("Торт «Прага»", 650.0, "Мучная", "Торт", 100.0);
+        auto* cake = new Confectionery("Торт «Прага»", 650.0, "Мучная", "Торт", 100.0);
         cake->AddShop("Пятёрочка");
         cake->AddShop("Магнит");
         factory.AddProduct(cake);
 
-        auto cookies = std::make_shared<Confectionery>("Печенье", 320.0, "Мучная", "Печенье", 200.0);
+        auto* cookies = new Confectionery("Печенье", 320.0, "Мучная", "Печенье", 200.0);
         cookies->AddShop("Ашан");
         factory.AddProduct(cookies);
 
-        auto chocolate = std::make_shared<Confectionery>("Шоколад", 890.0, "Шоколадная", "Шоколад", 700.0);
+        auto* chocolate = new Confectionery("Шоколад", 890.0, "Шоколадная", "Шоколад", 700.0);
         chocolate->AddShop("Ашан");
         factory.AddProduct(chocolate);
 
@@ -371,8 +370,10 @@ TEST(ConfectioneryFactoryTests, GetName_ReturnsConstructorValue) {
 
 TEST(ConfectioneryFactoryTests, AddProduct_IncreasesCount) {
     ConfectioneryFactory f("Фабрика");
-    f.AddProduct(std::make_shared<RawMaterial>("A", 1.0, "cat", "sup", 1.0));
-    f.AddProduct(std::make_shared<RawMaterial>("B", 1.0, "cat", "sup", 1.0));
+    RawMaterial r1("A", 1.0, "cat", "sup", 1.0);
+    RawMaterial r2("B", 1.0, "cat", "sup", 1.0);
+    f.AddProduct(&r1);
+    f.AddProduct(&r2);
     EXPECT_EQ(static_cast<size_t>(2), f.GetAllProducts().size());
 }
 
@@ -535,22 +536,22 @@ TEST(ConfectioneryFactoryTests, GetTotalProductionCost_Empty_ReturnsZero) {
 
 TEST(ConfectioneryFactoryTests, FindProductByName_Existing_ReturnsProduct) {
     ConfectioneryFactory f = BuildSampleFactory();
-    EXPECT_NE(nullptr, f.FindProductByName("торт «прага»").get());
+    EXPECT_NE(nullptr, f.FindProductByName("торт «прага»"));
 }
 
 TEST(ConfectioneryFactoryTests, FindProductByName_Missing_ReturnsNullptr) {
     ConfectioneryFactory f = BuildSampleFactory();
-    EXPECT_EQ(nullptr, f.FindProductByName("Несуществующий").get());
+    EXPECT_EQ(nullptr, f.FindProductByName("Несуществующий"));
 }
 
 TEST(ConfectioneryFactoryTests, FindProductByName_CaseInsensitive) {
     ConfectioneryFactory f = BuildSampleFactory();
-    EXPECT_NE(nullptr, f.FindProductByName("ТОРТ «ПРАГА»").get());
+    EXPECT_NE(nullptr, f.FindProductByName("ТОРТ «ПРАГА»"));
 }
 
 TEST(ConfectioneryFactoryTests, FindProductByName_EmptyFactory_ReturnsNullptr) {
     ConfectioneryFactory f("Пустая");
-    EXPECT_EQ(nullptr, f.FindProductByName("Торт").get());
+    EXPECT_EQ(nullptr, f.FindProductByName("Торт"));
 }
 
 TEST(ConfectioneryFactoryTests, GetSalesForPeriod_Week_ReturnsRecent) {

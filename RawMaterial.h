@@ -14,8 +14,8 @@ public:
     /**
      * @brief Создаёт партию сырья у конкретного поставщика.
      */
-    RawMaterial(std::string name, double pricePerKg, std::string category,
-                std::string supplierName, double orderedKg);
+    RawMaterial(const std::string name, const double pricePerKg, const std::string category,
+                const std::string supplierName, const double orderedKg);
 
     /**
      * @brief Возвращает имя поставщика.
@@ -30,7 +30,7 @@ public:
     /**
      * @brief Увеличивает заказ на указанное количество кг.
      */
-    void AddOrder(double kg);
+    void AddOrder(const double kg);
 
     /**
      * @brief Возвращает название вида: "Сырьё".
@@ -44,6 +44,8 @@ protected:
     std::string GetSpecificInfo() const override;
 
 private:
+    /** @brief Имя поставщика. */
     std::string supplierName_;
-    double orderedKg_ = 0.0;
+    /** @brief Заказанное количество сырья (кг). */
+    double orderedKg_;
 };

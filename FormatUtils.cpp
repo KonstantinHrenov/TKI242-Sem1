@@ -55,7 +55,7 @@ namespace {
 
 namespace FormatUtils {
 
-    std::string FormatDecimal(double value) {
+    std::string FormatDecimal(const double value) {
         const bool negative = value < 0.0;
         const double absValue = negative ? -value : value;
         const long long hundredths = static_cast<long long>(std::floor(absValue * 100.0 + 0.5));
@@ -66,7 +66,7 @@ namespace FormatUtils {
             (frac < 10 ? "0" : "") + std::to_string(frac);
     }
 
-    std::string FormatMoney(double value) {
+    std::string FormatMoney(const double value) {
         return FormatDecimal(value);
     }
 

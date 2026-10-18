@@ -13,7 +13,7 @@ public:
     /**
      * @brief Создаёт товар с его общими атрибутами.
      */
-    Product(std::string name, double pricePerKg, std::string category);
+    Product(const std::string name, const double pricePerKg, const std::string category);
 
     /**
      * @brief Виртуальный деструктор.
@@ -38,7 +38,7 @@ public:
     /**
      * @brief Устанавливает новую цену за килограмм.
      */
-    void SetPricePerKg(double price);
+    void SetPricePerKg(const double price);
 
     /**
      * @brief Возвращает название вида товара.
@@ -57,7 +57,10 @@ protected:
     virtual std::string GetSpecificInfo() const = 0;
 
 private:
+    /** @brief Название товара. */
     std::string name_;
-    double pricePerKg_ = 0.0;
+    /** @brief Цена за килограмм. */
+    double pricePerKg_;
+    /** @brief Категория товара. */
     std::string category_;
 };

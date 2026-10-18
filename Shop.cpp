@@ -1,7 +1,7 @@
 #include "Shop.h"
 
-Shop::Shop(std::string name, std::string address)
-    : name_(std::move(name)), address_(std::move(address)) {
+Shop::Shop(const std::string name, const std::string address)
+    : name_(name), address_(address) {
 }
 
 const std::string& Shop::GetName() const { return name_; }

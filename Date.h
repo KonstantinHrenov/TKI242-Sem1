@@ -13,7 +13,7 @@ public:
     /**
      * @brief Создаёт дату по числовым компонентам.
      */
-    Date(int year, int month, int day);
+    Date(const int year, const int month, const int day);
 
     /**
      * @brief Разбирает дату из строки "ГГГГ-ММ-ДД".
@@ -81,12 +81,15 @@ public:
     bool operator>=(const Date& other) const;
 
 private:
-    int year_ = 0;
-    int month_ = 0;
-    int day_ = 0;
+    /** @brief Год. */
+    int year_;
+    /** @brief Месяц. */
+    int month_;
+    /** @brief День месяца. */
+    int day_;
 
     /**
      * @brief Проверяет корректность календарной даты.
      */
-    static void Validate(int year, int month, int day);
+    static void Validate(const int year, const int month, const int day);
 };

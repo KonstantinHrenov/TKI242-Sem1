@@ -10,7 +10,6 @@
 //   4) Наиболее популярный вид товара.
 //   5) Стоимость произведённого за отчётный период.
 //
-#include <memory>
 #include <string>
 #include <vector>
 #include "Product.h"
@@ -25,15 +24,18 @@
  * @brief Период, за который запрашивается отчёт о продажах.
  */
 enum class SalesPeriod {
-    Week,
-    Month,
-    Year
+    /** @brief Неделя. */
+    Week = 1,
+    /** @brief Месяц. */
+    Month = 2,
+    /** @brief Год. */
+    Year = 3
 };
 
 /**
  * @brief Возвращает русское название периода продаж.
  */
-inline std::string SalesPeriodName(SalesPeriod period) {
+inline std::string SalesPeriodName(const SalesPeriod period) {
     switch (period) {
     case SalesPeriod::Week:  return "неделю";
     case SalesPeriod::Month: return "месяц";
@@ -60,7 +62,7 @@ public:
     /**
      * @brief Добавляет товар в справочник.
      */
-    void AddProduct(std::shared_ptr<Product> product);
+    void AddProduct(Product* product);
 
     /**
      * @brief Добавляет магазин в список.
@@ -75,7 +77,7 @@ public:
     /**
      * @brief Возвращает все товары.
      */
-    const std::vector<std::shared_ptr<Product>>& GetAllProducts() const;
+    const std::vector<Product*>& GetAllProducts() const;
 
     /**
      * @brief Возвращает все магазины.
@@ -90,7 +92,7 @@ public:
     /**
      * @brief Ищет товар по названию (регистронезависимо).
      */
-    std::shared_ptr<Product> FindProductByName(const std::string& name) const;
+    Product* FindProductByName(const std::string& name) const;
 
     /**
      * @brief Задание 1: список магазинов, заказывающих данный товар.
@@ -100,12 +102,12 @@ public:
     /**
      * @brief Задание 2: список продуктов у данного поставщика.
      */
-    std::vector<std::shared_ptr<RawMaterial>> GetProductsBySupplier(const std::string& supplierName) const;
+    std::vector<RawMaterial*> GetProductsBySupplier(const std::string& supplierName) const;
 
     /**
      * @brief Задание 3: ассортимент по категории.
      */
-    std::vector<std::shared_ptr<Product>> GetAssortmentByCategory(const std::string& category) const;
+    std::vector<Product*> GetAssortmentByCategory(const std::string& category) const;
 
     /**
      * @brief Задание 4: наиболее популярный вид товара.
@@ -115,42 +117,46 @@ public:
     /**
      * @brief Задание 5: стоимость произведённого за период.
      */
-    double GetTotalProductionCost(ProductionPeriod period) const;
+    double GetTotalProductionCost(const ProductionPeriod period) const;
 
     /**
      * @brief Возвращает продажи товара за период.
      */
     std::vector<Sale> GetSalesForPeriod(const std::string& productName,
-                                        SalesPeriod period,
+                                        const SalesPeriod period,
                                         const Date& asOf) const;
 
     /**
      * @brief Суммирует количество проданных единиц за период.
      */
     int GetTotalQuantitySold(const std::string& productName,
-                             SalesPeriod period,
+                             const SalesPeriod period,
                              const Date& asOf) const;
 
     /**
      * @brief Суммирует выручку по продажам за период.
      */
     double GetTotalRevenue(const std::string& productName,
-                           SalesPeriod period,
+                           const SalesPeriod period,
                            const Date& asOf) const;
 
 private:
+    /** @brief Название фабрики. */
     std::string name_;
-    std::vector<std::shared_ptr<Product>> products_;
+    /** @brief Справочник товаров фабрики. */
+    std::vector<Product*> products_;
+    /** @brief Список магазинов-партнёров. */
     std::vector<Shop> shops_;
+    /** @brief Журнал совершённых продаж. */
     std::vector<Sale> sales_;
 
     /**
      * @brief Возвращает длину периода в днях.
      */
-    static int PeriodLengthDays(SalesPeriod period);
+    static int PeriodLengthDays(const SalesPeriod period);
 
     /**
      * @brief Проверяет, попадает ли дата в период.
      */
-    bool IsWithinPeriod(const Date& saleDate, const Date& asOf, SalesPeriod period) const;
+    bool IsWithinPeriod(const Date& saleDate, const Date& asOf, const SalesPeriod period) const;
 };
