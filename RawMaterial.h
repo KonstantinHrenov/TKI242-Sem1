@@ -1,8 +1,5 @@
 #pragma once
-//
-// RawMaterial.h
-// Класс-наследник "Сырьё" - продукт, заказываемый у поставщика.
-//
+
 #include "Product.h"
 #include <string>
 
@@ -12,40 +9,43 @@
 class RawMaterial : public Product {
 public:
     /**
-     * @brief Создаёт партию сырья у конкретного поставщика.
+     * @brief Создаёт партию сырья.
+     * @param name Название сырья.
+     * @param pricePerKg Цена за килограмм.
+     * @param category Категория сырья.
+     * @param supplierName Имя поставщика.
+     * @param orderedKg Заказанное количество (кг).
      */
-    RawMaterial(const std::string name, const double pricePerKg, const std::string category,
-                const std::string supplierName, const double orderedKg);
+    RawMaterial(const std::string& name, double pricePerKg, const std::string& category,
+                const std::string& supplierName, double orderedKg);
 
     /**
-     * @brief Возвращает имя поставщика.
+     * @return Имя поставщика.
      */
-    const std::string& GetSupplierName() const;
+    const std::string& GetSupplierName() const noexcept;
 
     /**
-     * @brief Возвращает заказанное количество (кг).
+     * @return Заказанное количество сырья в килограммах.
      */
-    double GetOrderedKg() const;
+    double GetOrderedKg() const noexcept;
 
     /**
-     * @brief Увеличивает заказ на указанное количество кг.
+     * @param kg Дополнительное количество килограммов для заказа.
      */
-    void AddOrder(const double kg);
+    void AddOrder(double kg) noexcept;
 
     /**
-     * @brief Возвращает название вида: "Сырьё".
+     * @return Название вида: "Сырьё".
      */
     std::string GetKindName() const override;
 
 protected:
     /**
-     * @brief Возвращает описание, специфичное для сырья.
+     * @return Описание поставщика и объёма заказа.
      */
     std::string GetSpecificInfo() const override;
 
 private:
-    /** @brief Имя поставщика. */
     std::string supplierName_;
-    /** @brief Заказанное количество сырья (кг). */
     double orderedKg_;
 };

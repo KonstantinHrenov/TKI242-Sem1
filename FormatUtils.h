@@ -1,25 +1,30 @@
 #pragma once
-//
-// FormatUtils.h
-// Вспомогательные функции форматирования строк.
-//
+
 #include <string>
 
+/**
+ * @brief Вспомогательные функции форматирования значений.
+ */
 namespace FormatUtils {
-
     /**
-     * @brief Форматирует дробное число как денежную сумму.
+     * @brief Форматирует сумму в рублях с копейками.
+     * @param[in] value Сумма в рублях.
+     * @return Отформатированная строка.
      */
-    std::string FormatMoney(const double value);
+    std::string FormatMoney(double value);
 
     /**
-     * @brief Форматирует дробное число с двумя знаками после точки.
+     * @brief Форматирует число с двумя знаками после точки.
+     * @param[in] value Числовое значение.
+     * @return Отформатированная строка.
      */
-    std::string FormatDecimal(const double value);
+    std::string FormatDecimal(double value);
 
     /**
-     * @brief Регистронезависимое сравнение двух строк в UTF-8.
+     * @brief Регистронезависимое сравнение строк.
+     * @param[in] a Первая строка.
+     * @param[in] b Вторая строка.
+     * @return true, если строки равны без учёта регистра.
      */
     bool EqualsIgnoreCase(const std::string& a, const std::string& b);
-
 }

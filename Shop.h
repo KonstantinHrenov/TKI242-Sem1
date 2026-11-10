@@ -1,38 +1,30 @@
 #pragma once
-//
-// Shop.h
-// Класс "Магазин" - торговая точка, заказывающая изделия.
-//
+
 #include <string>
 
 /**
- * @brief Магазин, получающий готовую продукцию.
+ * @brief Магазин, заказывающий продукцию фабрики.
  */
 class Shop {
 public:
     /**
-     * @brief Создаёт магазин с именем и адресом.
+     * @brief Создаёт магазин.
+     * @param name Название магазина.
+     * @param address Адрес магазина.
      */
-    Shop(const std::string name, const std::string address);
+    Shop(const std::string& name, const std::string& address);
 
     /**
-     * @brief Возвращает название магазина.
+     * @return Название магазина.
      */
-    const std::string& GetName() const;
+    const std::string& GetName() const noexcept;
 
     /**
-     * @brief Возвращает адрес магазина.
+     * @return Адрес магазина.
      */
-    const std::string& GetAddress() const;
-
-    /**
-     * @brief Возвращает строковое описание магазина.
-     */
-    std::string GetInfo() const;
+    const std::string& GetAddress() const noexcept;
 
 private:
-    /** @brief Название магазина. */
     std::string name_;
-    /** @brief Адрес магазина. */
     std::string address_;
 };

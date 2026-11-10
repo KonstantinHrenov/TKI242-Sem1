@@ -1,66 +1,60 @@
 #pragma once
-//
-// Product.h
-// Базовый класс "Товар" кондитерской фабрики.
-//
+
 #include <string>
 
 /**
- * @brief Базовый класс, представляющий один товар.
+ * @brief Базовый класс "Товар" кондитерской фабрики.
  */
 class Product {
 public:
     /**
-     * @brief Создаёт товар с его общими атрибутами.
+     * @brief Создаёт товар с базовыми атрибутами.
+     * @param name Название товара.
+     * @param pricePerKg Цена за килограмм.
+     * @param category Категория товара.
      */
-    Product(const std::string name, const double pricePerKg, const std::string category);
+    Product(const std::string& name, double pricePerKg, const std::string& category);
 
-    /**
-     * @brief Виртуальный деструктор.
-     */
     virtual ~Product() = default;
 
     /**
-     * @brief Возвращает название товара.
+     * @return Название товара.
      */
-    const std::string& GetName() const;
+    const std::string& GetName() const noexcept;
 
     /**
-     * @brief Возвращает цену за килограмм.
+     * @return Цена за килограмм.
      */
-    double GetPricePerKg() const;
+    double GetPricePerKg() const noexcept;
 
     /**
-     * @brief Возвращает категорию товара.
+     * @return Категория товара.
      */
-    const std::string& GetCategory() const;
+    const std::string& GetCategory() const noexcept;
 
     /**
-     * @brief Устанавливает новую цену за килограмм.
+     * @param price Новая цена за килограмм.
      */
-    void SetPricePerKg(const double price);
+    void SetPricePerKg(double price) noexcept;
 
     /**
-     * @brief Возвращает название вида товара.
+     * @return Название вида товара.
      */
-    virtual std::string GetKindName() const = 0;
+    virtual std::string GetKindName() const;
 
     /**
-     * @brief Формирует однострочное описание товара.
+     * @return Строковое описание товара.
      */
     virtual std::string GetInfo() const;
 
 protected:
     /**
-     * @brief Возвращает описание, специфичное для вида товара.
+     * @return Специфичная для наследника информация.
      */
-    virtual std::string GetSpecificInfo() const = 0;
+    virtual std::string GetSpecificInfo() const;
 
 private:
-    /** @brief Название товара. */
     std::string name_;
-    /** @brief Цена за килограмм. */
     double pricePerKg_;
-    /** @brief Категория товара. */
     std::string category_;
 };

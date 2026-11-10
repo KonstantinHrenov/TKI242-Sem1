@@ -1,53 +1,58 @@
 #pragma once
-//
-// Sale.h
-// Запись о продаже товара магазину.
-//
-#include <string>
+
 #include "Date.h"
+#include <string>
 
 /**
- * @brief Неизменяемая запись об одной продаже.
+ * @brief Запись о продаже партии товара магазину.
  */
 class Sale {
 public:
     /**
      * @brief Создаёт запись о продаже.
+     * @param productName Название товара.
+     * @param shopName Название магазина.
+     * @param kg Количество в килограммах.
+     * @param pricePerKg Цена за килограмм.
+     * @param saleDate Дата продажи.
      */
-    Sale(const std::string productName, const Date saleDate, const int quantity, const double totalPrice);
+    Sale(const std::string& productName, const std::string& shopName,
+         double kg, double pricePerKg, const Date& saleDate);
 
     /**
-     * @brief Возвращает название проданного товара.
+     * @return Название проданного товара.
      */
-    const std::string& GetProductName() const;
+    const std::string& GetProductName() const noexcept;
 
     /**
-     * @brief Возвращает дату продажи.
+     * @return Название магазина-покупателя.
      */
-    const Date& GetSaleDate() const;
+    const std::string& GetShopName() const noexcept;
 
     /**
-     * @brief Возвращает количество проданных единиц.
+     * @return Объем партии в килограммах.
      */
-    int GetQuantity() const;
+    double GetKg() const noexcept;
 
     /**
-     * @brief Возвращает общую сумму продажи.
+     * @return Цена за килограмм.
      */
-    double GetTotalPrice() const;
+    double GetPricePerKg() const noexcept;
 
     /**
-     * @brief Формирует однострочное описание продажи.
+     * @return Общая стоимость партии.
      */
-    std::string GetInfo() const;
+    double GetTotalCost() const noexcept;
+
+    /**
+     * @return Дата продажи.
+     */
+    const Date& GetDate() const noexcept;
 
 private:
-    /** @brief Название товара. */
     std::string productName_;
-    /** @brief Дата совершения продажи. */
+    std::string shopName_;
+    double kg_;
+    double pricePerKg_;
     Date saleDate_;
-    /** @brief Количество проданных единиц. */
-    int quantity_;
-    /** @brief Общая сумма продажи. */
-    double totalPrice_;
 };

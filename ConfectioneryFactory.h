@@ -1,162 +1,164 @@
 #pragma once
-//
-// ConfectioneryFactory.h
-// Класс "Кондитерская фабрика" - справочник товаров плюс журнал продаж.
-//
-// Реализует задания варианта "Кондитерская фабрика":
-//   1) Список магазинов, заказывающих данный товар.
-//   2) Список продуктов, заказываемых у данного поставщика.
-//   3) Ассортимент данного товара и цену.
-//   4) Наиболее популярный вид товара.
-//   5) Стоимость произведённого за отчётный период.
-//
-#include <string>
-#include <vector>
+
 #include "Product.h"
 #include "RawMaterial.h"
 #include "Confectionery.h"
 #include "Shop.h"
 #include "Sale.h"
-#include "ProductionPeriod.h"
 #include "Date.h"
 
-/**
- * @brief Период, за который запрашивается отчёт о продажах.
- */
-enum class SalesPeriod {
-    /** @brief Неделя. */
-    Week = 1,
-    /** @brief Месяц. */
-    Month = 2,
-    /** @brief Год. */
-    Year = 3
-};
+#include <functional>
+#include <string>
+#include <utility>
+#include <vector>
 
 /**
- * @brief Возвращает русское название периода продаж.
- */
-inline std::string SalesPeriodName(const SalesPeriod period) {
-    switch (period) {
-    case SalesPeriod::Week:  return "неделю";
-    case SalesPeriod::Month: return "месяц";
-    case SalesPeriod::Year:  return "год";
-    }
-    return "период";
-}
-
-/**
- * @brief Объединяет справочник товаров, магазины и журнал продаж.
+ * @brief Кондитерская фабрика: управляет товарами, поставками и продажами.
  */
 class ConfectioneryFactory {
 public:
     /**
-     * @brief Создаёт пустую фабрику с заданным названием.
+     * @brief Создаёт фабрику с указанным названием.
+     * @param name Название фабрики.
      */
-    explicit ConfectioneryFactory(const std::string name);
+    explicit ConfectioneryFactory(const std::string& name = "Сладкие Традиции");
 
     /**
-     * @brief Возвращает название фабрики.
+     * @return Название фабрики.
      */
-    const std::string& GetName() const;
+    const std::string& GetName() const noexcept;
 
     /**
-     * @brief Добавляет товар в справочник.
+     * @brief Добавляет партию сырья на фабрику.
+     * @param material Объект сырья.
      */
-    void AddProduct(Product* product);
+    void AddProduct(const RawMaterial& material);
 
     /**
-     * @brief Добавляет магазин в список.
+     * @brief Добавляет кондитерское изделие на фабрику.
+     * @param confectionery Объект кондитерского изделия.
      */
-    void AddShop(const Shop& shop);
+    void AddProduct(const Confectionery& confectionery);
 
     /**
-     * @brief Регистрирует продажу.
+     * @brief Добавляет базовый товар на фабрику.
+     * @param product Объект базового товара.
      */
-    void RegisterSale(const Sale& sale);
+    void AddProduct(const Product& product);
 
     /**
-     * @brief Возвращает все товары.
+     * @return Константная ссылка на вектор базовых товаров.
      */
-    const std::vector<Product*>& GetAllProducts() const;
+    const std::vector<Product>& GetAllProducts() const noexcept;
 
     /**
-     * @brief Возвращает все магазины.
+     * @return Вектор зарегистрированного сырья.
      */
-    const std::vector<Shop>& GetAllShops() const;
+    const std::vector<RawMaterial>& GetRawMaterials() const noexcept;
 
     /**
-     * @brief Возвращает все продажи.
+     * @return Вектор зарегистрированных кондитерских изделий.
      */
-    const std::vector<Sale>& GetAllSales() const;
+    const std::vector<Confectionery>& GetConfectioneries() const noexcept;
 
     /**
-     * @brief Ищет товар по названию (регистронезависимо).
+     * @return Коллекция ссылок на продукты как на базовый класс Product.
      */
-    Product* FindProductByName(const std::string& name) const;
+    std::vector<std::reference_wrapper<const Product>> GetPolymorphicProducts() const;
+
+    /**
+     * @brief Поиск сырья по названию.
+     * @param name Имя товара.
+     * @param found Выходной объект сырья.
+     * @return true при успешном поиске, иначе false.
+     */
+    bool FindProductByName(const std::string& name, RawMaterial& found) const;
+
+    /**
+     * @brief Поиск кондитерского изделия по названию.
+     * @param name Имя товара.
+     * @param found Выходной объект изделия.
+     * @return true при успешном поиске, иначе false.
+     */
+    bool FindProductByName(const std::string& name, Confectionery& found) const;
+
+    /**
+     * @brief Поиск товара по названию.
+     * @param name Имя товара.
+     * @param found Выходной базовый объект.
+     * @return true при успешном поиске, иначе false.
+     */
+    bool FindProductByName(const std::string& name, Product& found) const;
+
+    /**
+     * @brief Проверяет наличие товара на фабрике.
+     * @param name Имя товара.
+     * @return true если товар присутствует, иначе false.
+     */
+    bool HasProduct(const std::string& name) const;
+
+    /**
+     * @brief Получить список сырья указанного поставщика.
+     * @param supplierName Имя поставщика.
+     * @return Вектор сырья от данного поставщика.
+     */
+    std::vector<RawMaterial> GetProductsBySupplier(const std::string& supplierName) const;
+
+    /**
+     * @brief Получить ассортимент сырья по категории.
+     * @param category Категория.
+     * @param outAssortment Выходной вектор сырья.
+     */
+    void GetAssortmentByCategory(const std::string& category, std::vector<RawMaterial>& outAssortment) const;
+
+    /**
+     * @brief Получить ассортимент изделий по категории.
+     * @param category Категория.
+     * @param outAssortment Выходной вектор изделий.
+     */
+    void GetAssortmentByCategory(const std::string& category, std::vector<Confectionery>& outAssortment) const;
+
+    std::vector<RawMaterial> GetRawMaterialsByCategory(const std::string& category) const;
+    std::vector<Confectionery> GetConfectioneryByCategory(const std::string& category) const;
 
     /**
      * @brief Задание 1: список магазинов, заказывающих данный товар.
+     * @param productName Название изделия.
+     * @return Список названий магазинов.
      */
     std::vector<std::string> GetShopsForProduct(const std::string& productName) const;
 
     /**
-     * @brief Задание 2: список продуктов у данного поставщика.
-     */
-    std::vector<RawMaterial*> GetProductsBySupplier(const std::string& supplierName) const;
-
-    /**
-     * @brief Задание 3: ассортимент по категории.
-     */
-    std::vector<Product*> GetAssortmentByCategory(const std::string& category) const;
-
-    /**
-     * @brief Задание 4: наиболее популярный вид товара.
+     * @brief Задание 4: наиболее популярный вид кондитерского изделия.
+     * @return Название популярного вида.
      */
     std::string GetMostPopularKind() const;
 
     /**
-     * @brief Задание 5: стоимость произведённого за период.
+     * @brief Задание 5: стоимость произведенного товара за период.
+     * @param from Начало периода.
+     * @param to Конец периода.
+     * @return Суммарная стоимость.
      */
-    double GetTotalProductionCost(const ProductionPeriod period) const;
+    double GetProductionValueInPeriod(const Date& from, const Date& to) const;
+
+    void AddShop(const Shop& shop);
+    const std::vector<Shop>& GetShops() const noexcept;
+
+    void AddSale(const Sale& sale);
+    const std::vector<Sale>& GetSales() const noexcept;
 
     /**
-     * @brief Возвращает продажи товара за период.
+     * @return Сводная информация о фабрике.
      */
-    std::vector<Sale> GetSalesForPeriod(const std::string& productName,
-                                        const SalesPeriod period,
-                                        const Date& asOf) const;
-
-    /**
-     * @brief Суммирует количество проданных единиц за период.
-     */
-    int GetTotalQuantitySold(const std::string& productName,
-                             const SalesPeriod period,
-                             const Date& asOf) const;
-
-    /**
-     * @brief Суммирует выручку по продажам за период.
-     */
-    double GetTotalRevenue(const std::string& productName,
-                           const SalesPeriod period,
-                           const Date& asOf) const;
+    std::string ToString() const;
 
 private:
-    /** @brief Название фабрики. */
     std::string name_;
-    /** @brief Справочник товаров фабрики. */
-    std::vector<Product*> products_;
-    /** @brief Список магазинов-партнёров. */
+    std::vector<Product> products_;
+    std::vector<RawMaterial> rawMaterials_;
+    std::vector<Confectionery> confectioneries_;
+    std::vector<std::pair<bool, std::size_t>> productOrder_;
     std::vector<Shop> shops_;
-    /** @brief Журнал совершённых продаж. */
     std::vector<Sale> sales_;
-
-    /**
-     * @brief Возвращает длину периода в днях.
-     */
-    static int PeriodLengthDays(const SalesPeriod period);
-
-    /**
-     * @brief Проверяет, попадает ли дата в период.
-     */
-    bool IsWithinPeriod(const Date& saleDate, const Date& asOf, const SalesPeriod period) const;
 };

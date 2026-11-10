@@ -2,125 +2,172 @@
 #include "FormatUtils.h"
 #include <map>
 
-ConfectioneryFactory::ConfectioneryFactory(const std::string name)
-    : name_(name) {
+ConfectioneryFactory::ConfectioneryFactory(const std::string& name)
+    : name_(name) {}
+
+const std::string& ConfectioneryFactory::GetName() const noexcept { return name_; }
+
+void ConfectioneryFactory::AddProduct(const RawMaterial& material) {
+    rawMaterials_.push_back(material);
+    productOrder_.emplace_back(true, rawMaterials_.size() - 1);
+    products_.push_back(Product(material.GetName(), material.GetPricePerKg(), material.GetCategory()));
 }
 
-const std::string& ConfectioneryFactory::GetName() const { return name_; }
+void ConfectioneryFactory::AddProduct(const Confectionery& confectionery) {
+    confectioneries_.push_back(confectionery);
+    productOrder_.emplace_back(false, confectioneries_.size() - 1);
+    products_.push_back(Product(confectionery.GetName(), confectionery.GetPricePerKg(), confectionery.GetCategory()));
+}
 
-void ConfectioneryFactory::AddProduct(Product* product) {
-    if (product) {
-        products_.push_back(product);
+void ConfectioneryFactory::AddProduct(const Product& product) {
+    products_.push_back(product);
+}
+
+const std::vector<Product>& ConfectioneryFactory::GetAllProducts() const noexcept {
+    return products_;
+}
+
+const std::vector<RawMaterial>& ConfectioneryFactory::GetRawMaterials() const noexcept {
+    return rawMaterials_;
+}
+
+const std::vector<Confectionery>& ConfectioneryFactory::GetConfectioneries() const noexcept {
+    return confectioneries_;
+}
+
+std::vector<std::reference_wrapper<const Product>> ConfectioneryFactory::GetPolymorphicProducts() const {
+    std::vector<std::reference_wrapper<const Product>> result;
+    result.reserve(productOrder_.size());
+    for (const auto& entry : productOrder_) {
+        if (entry.first) {
+            result.emplace_back(rawMaterials_[entry.second]);
+        } else {
+            result.emplace_back(confectioneries_[entry.second]);
+        }
+    }
+    return result;
+}
+
+bool ConfectioneryFactory::FindProductByName(const std::string& name, RawMaterial& found) const {
+    for (const auto& item : rawMaterials_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) {
+            found = item;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ConfectioneryFactory::FindProductByName(const std::string& name, Confectionery& found) const {
+    for (const auto& item : confectioneries_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) {
+            found = item;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ConfectioneryFactory::FindProductByName(const std::string& name, Product& found) const {
+    for (const auto& item : products_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) {
+            found = item;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ConfectioneryFactory::HasProduct(const std::string& name) const {
+    for (const auto& item : products_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) return true;
+    }
+    return false;
+}
+
+std::vector<RawMaterial> ConfectioneryFactory::GetProductsBySupplier(const std::string& supplierName) const {
+    std::vector<RawMaterial> result;
+    for (const auto& item : rawMaterials_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetSupplierName(), supplierName)) {
+            result.push_back(item);
+        }
+    }
+    return result;
+}
+
+void ConfectioneryFactory::GetAssortmentByCategory(const std::string& category, std::vector<RawMaterial>& outAssortment) const {
+    outAssortment.clear();
+    for (const auto& item : rawMaterials_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetCategory(), category)) {
+            outAssortment.push_back(item);
+        }
     }
 }
 
-void ConfectioneryFactory::AddShop(const Shop& shop) { shops_.push_back(shop); }
-void ConfectioneryFactory::RegisterSale(const Sale& sale) { sales_.push_back(sale); }
-
-const std::vector<Product*>& ConfectioneryFactory::GetAllProducts() const { return products_; }
-const std::vector<Shop>& ConfectioneryFactory::GetAllShops() const { return shops_; }
-const std::vector<Sale>& ConfectioneryFactory::GetAllSales() const { return sales_; }
-
-Product* ConfectioneryFactory::FindProductByName(const std::string& name) const {
-    for (const auto& product : products_) {
-        if (FormatUtils::EqualsIgnoreCase(product->GetName(), name)) return product;
+void ConfectioneryFactory::GetAssortmentByCategory(const std::string& category, std::vector<Confectionery>& outAssortment) const {
+    outAssortment.clear();
+    for (const auto& item : confectioneries_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetCategory(), category)) {
+            outAssortment.push_back(item);
+        }
     }
-    return nullptr;
+}
+
+std::vector<RawMaterial> ConfectioneryFactory::GetRawMaterialsByCategory(const std::string& category) const {
+    std::vector<RawMaterial> out;
+    GetAssortmentByCategory(category, out);
+    return out;
+}
+
+std::vector<Confectionery> ConfectioneryFactory::GetConfectioneryByCategory(const std::string& category) const {
+    std::vector<Confectionery> out;
+    GetAssortmentByCategory(category, out);
+    return out;
 }
 
 std::vector<std::string> ConfectioneryFactory::GetShopsForProduct(const std::string& productName) const {
-    std::vector<std::string> result;
-    for (const auto& product : products_) {
-        if (!FormatUtils::EqualsIgnoreCase(product->GetName(), productName)) continue;
-        const auto c = dynamic_cast<Confectionery*>(product);
-        if (c) for (const auto& s : c->GetShops()) result.push_back(s);
-    }
-    return result;
-}
-
-std::vector<RawMaterial*> ConfectioneryFactory::GetProductsBySupplier(const std::string& supplierName) const {
-    std::vector<RawMaterial*> result;
-    for (const auto& product : products_) {
-        const auto raw = dynamic_cast<RawMaterial*>(product);
-        if (raw && FormatUtils::EqualsIgnoreCase(raw->GetSupplierName(), supplierName)) {
-            result.push_back(raw);
+    for (const auto& item : confectioneries_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetName(), productName)) {
+            return item.GetShops();
         }
     }
-    return result;
-}
-
-std::vector<Product*> ConfectioneryFactory::GetAssortmentByCategory(const std::string& category) const {
-    std::vector<Product*> result;
-    for (const auto& product : products_) {
-        if (FormatUtils::EqualsIgnoreCase(product->GetCategory(), category)) {
-            result.push_back(product);
-        }
-    }
-    return result;
+    return {};
 }
 
 std::string ConfectioneryFactory::GetMostPopularKind() const {
-    std::map<std::string, double> totals;
-    for (const auto& product : products_) {
-        const auto c = dynamic_cast<Confectionery*>(product);
-        if (c) totals[c->GetKind()] += c->GetProducedKg();
+    std::map<std::string, double> popularity;
+    for (const auto& c : confectioneries_) {
+        popularity[c.GetKind()] += c.GetProducedKg();
     }
-    std::string best;
-    double bestWeight = -1.0;
-    for (const auto& pair : totals) {
-        if (pair.second > bestWeight) { bestWeight = pair.second; best = pair.first; }
-    }
-    return best;
-}
-
-double ConfectioneryFactory::GetTotalProductionCost(const ProductionPeriod /*period*/) const {
-    double total = 0.0;
-    for (const auto& product : products_) {
-        const auto c = dynamic_cast<Confectionery*>(product);
-        if (c) total += c->GetProducedKg() * c->GetPricePerKg();
-    }
-    return total;
-}
-
-int ConfectioneryFactory::PeriodLengthDays(const SalesPeriod period) {
-    switch (period) {
-    case SalesPeriod::Week:  return 7;
-    case SalesPeriod::Month: return 30;
-    case SalesPeriod::Year:  return 365;
-    }
-    return 0;
-}
-
-bool ConfectioneryFactory::IsWithinPeriod(const Date& saleDate, const Date& asOf, const SalesPeriod period) const {
-    const long daysAgo = saleDate.DaysUntil(asOf);
-    return daysAgo >= 0 && daysAgo <= PeriodLengthDays(period);
-}
-
-std::vector<Sale> ConfectioneryFactory::GetSalesForPeriod(const std::string& productName,
-                                                         const SalesPeriod period,
-                                                         const Date& asOf) const {
-    std::vector<Sale> result;
-    for (const auto& sale : sales_) {
-        if (FormatUtils::EqualsIgnoreCase(sale.GetProductName(), productName) &&
-            IsWithinPeriod(sale.GetSaleDate(), asOf, period)) {
-            result.push_back(sale);
+    std::string bestKind;
+    double maxKg = -1.0;
+    for (const auto& pair : popularity) {
+        if (pair.second > maxKg) {
+            maxKg = pair.second;
+            bestKind = pair.first;
         }
     }
-    return result;
+    return bestKind;
 }
 
-int ConfectioneryFactory::GetTotalQuantitySold(const std::string& productName,
-                                               const SalesPeriod period,
-                                               const Date& asOf) const {
-    int total = 0;
-    for (const auto& sale : GetSalesForPeriod(productName, period, asOf)) total += sale.GetQuantity();
-    return total;
-}
-
-double ConfectioneryFactory::GetTotalRevenue(const std::string& productName,
-                                             const SalesPeriod period,
-                                             const Date& asOf) const {
+double ConfectioneryFactory::GetProductionValueInPeriod(const Date& from, const Date& to) const {
     double total = 0.0;
-    for (const auto& sale : GetSalesForPeriod(productName, period, asOf)) total += sale.GetTotalPrice();
+    for (const auto& item : confectioneries_) {
+        if (item.GetProductionDate() >= from && item.GetProductionDate() <= to) {
+            total += item.GetProducedKg() * item.GetPricePerKg();
+        }
+    }
     return total;
+}
+
+void ConfectioneryFactory::AddShop(const Shop& shop) { shops_.push_back(shop); }
+const std::vector<Shop>& ConfectioneryFactory::GetShops() const noexcept { return shops_; }
+
+void ConfectioneryFactory::AddSale(const Sale& sale) { sales_.push_back(sale); }
+const std::vector<Sale>& ConfectioneryFactory::GetSales() const noexcept { return sales_; }
+
+std::string ConfectioneryFactory::ToString() const {
+    return name_ + ", сырья: " + std::to_string(rawMaterials_.size()) +
+           ", изделий: " + std::to_string(confectioneries_.size()) +
+           ", магазинов: " + std::to_string(shops_.size());
 }

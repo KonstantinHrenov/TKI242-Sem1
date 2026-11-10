@@ -1,64 +1,71 @@
 #pragma once
-//
-// Confectionery.h
-// Класс-наследник "Готовое кондитерское изделие".
-//
+
 #include "Product.h"
+#include "Date.h"
 #include <string>
 #include <vector>
 
 /**
- * @brief Готовое кондитерское изделие (торт, печенье, конфеты).
+ * @brief Готовое кондитерское изделие (торт, печенье, шоколад).
  */
 class Confectionery : public Product {
 public:
     /**
      * @brief Создаёт готовое изделие.
+     * @param name Название изделия.
+     * @param pricePerKg Цена за килограмм.
+     * @param category Категория изделия.
+     * @param kind Вид изделия ("Торт", "Печенье", "Шоколад").
+     * @param producedKg Произведённое количество (кг).
+     * @param productionDate Дата производства партии.
      */
-    Confectionery(const std::string name, const double pricePerKg, const std::string category,
-                  const std::string kind, const double producedKg);
+    Confectionery(const std::string& name, double pricePerKg, const std::string& category,
+                  const std::string& kind, double producedKg, const Date& productionDate = Date(2026, 9, 1));
 
     /**
-     * @brief Возвращает вид изделия ("Торт", "Печенье" и т.д.).
+     * @return Вид изделия.
      */
-    const std::string& GetKind() const;
+    const std::string& GetKind() const noexcept;
 
     /**
-     * @brief Возвращает произведённое количество (кг).
+     * @return Произведённое количество в килограммах.
      */
-    double GetProducedKg() const;
+    double GetProducedKg() const noexcept;
 
     /**
-     * @brief Возвращает список магазинов-получателей.
+     * @return Дата производства партии.
      */
-    const std::vector<std::string>& GetShops() const;
+    const Date& GetProductionDate() const noexcept;
 
     /**
-     * @brief Добавляет магазин в список получателей.
+     * @return Список магазинов-получателей.
+     */
+    const std::vector<std::string>& GetShops() const noexcept;
+
+    /**
+     * @param shop Название магазина для добавления.
      */
     void AddShop(const std::string& shop);
 
     /**
-     * @brief Увеличивает произведённое количество.
+     * @param kg Количество килограммов для добавления к производству.
      */
-    void AddProduction(const double kg);
+    void AddProduction(double kg) noexcept;
 
     /**
-     * @brief Возвращает название вида: "Готовое изделие".
+     * @return Название вида: "Готовое изделие".
      */
     std::string GetKindName() const override;
 
 protected:
     /**
-     * @brief Возвращает описание, специфичное для готового изделия.
+     * @return Описание вида, объёма и магазинов.
      */
     std::string GetSpecificInfo() const override;
 
 private:
-    /** @brief Вид кондитерского изделия. */
     std::string kind_;
-    /** @brief Список магазинов-получателей. */
     std::vector<std::string> shops_;
-    /** @brief Произведённое количество (кг). */
     double producedKg_;
+    Date productionDate_;
 };

@@ -1,18 +1,13 @@
 #include "Sale.h"
-#include "FormatUtils.h"
 
-Sale::Sale(const std::string productName, const Date saleDate, const int quantity, const double totalPrice)
-    : productName_(productName), saleDate_(saleDate),
-      quantity_(quantity), totalPrice_(totalPrice) {
-}
+Sale::Sale(const std::string& productName, const std::string& shopName,
+           double kg, double pricePerKg, const Date& saleDate)
+    : productName_(productName), shopName_(shopName),
+      kg_(kg), pricePerKg_(pricePerKg), saleDate_(saleDate) {}
 
-const std::string& Sale::GetProductName() const { return productName_; }
-const Date& Sale::GetSaleDate() const { return saleDate_; }
-int Sale::GetQuantity() const { return quantity_; }
-double Sale::GetTotalPrice() const { return totalPrice_; }
-
-std::string Sale::GetInfo() const {
-    return saleDate_.ToString() + ": " + productName_ +
-        " x" + std::to_string(quantity_) +
-        " = " + FormatUtils::FormatMoney(totalPrice_) + " руб.";
-}
+const std::string& Sale::GetProductName() const noexcept { return productName_; }
+const std::string& Sale::GetShopName() const noexcept { return shopName_; }
+double Sale::GetKg() const noexcept { return kg_; }
+double Sale::GetPricePerKg() const noexcept { return pricePerKg_; }
+double Sale::GetTotalCost() const noexcept { return kg_ * pricePerKg_; }
+const Date& Sale::GetDate() const noexcept { return saleDate_; }
