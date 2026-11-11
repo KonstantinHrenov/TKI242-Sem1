@@ -13,7 +13,7 @@ public:
      * @param month Номер месяца (1..12).
      * @param day День месяца (1..31).
      */
-    Date(int year, int month, int day);
+    Date(const int year, const int month, const int day);
 
     /**
      * @brief Разбирает дату из строки формата "ГГГГ-ММ-ДД".
