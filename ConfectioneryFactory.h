@@ -41,17 +41,6 @@ public:
     void AddProduct(const Confectionery& confectionery);
 
     /**
-     * @brief Добавляет базовый товар на фабрику.
-     * @param product Объект базового товара.
-     */
-    void AddProduct(const Product& product);
-
-    /**
-     * @return Константная ссылка на вектор базовых товаров.
-     */
-    const std::vector<Product>& GetAllProducts() const noexcept;
-
-    /**
      * @return Вектор зарегистрированного сырья.
      */
     const std::vector<RawMaterial>& GetRawMaterials() const noexcept;
@@ -81,14 +70,6 @@ public:
      * @return true при успешном поиске, иначе false.
      */
     bool FindProductByName(const std::string& name, Confectionery& found) const;
-
-    /**
-     * @brief Поиск товара по названию.
-     * @param name Имя товара.
-     * @param found Выходной базовый объект.
-     * @return true при успешном поиске, иначе false.
-     */
-    bool FindProductByName(const std::string& name, Product& found) const;
 
     /**
      * @brief Проверяет наличие товара на фабрике.
@@ -155,7 +136,6 @@ public:
 
 private:
     std::string name_;
-    std::vector<Product> products_;
     std::vector<RawMaterial> rawMaterials_;
     std::vector<Confectionery> confectioneries_;
     std::vector<std::pair<bool, std::size_t>> productOrder_;

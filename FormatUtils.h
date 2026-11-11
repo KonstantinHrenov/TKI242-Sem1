@@ -11,14 +11,14 @@ namespace FormatUtils {
      * @param[in] value Сумма в рублях.
      * @return Отформатированная строка.
      */
-    std::string FormatMoney(const double value);
+    std::string FormatMoney(double value);
 
     /**
      * @brief Форматирует число с двумя знаками после точки.
      * @param[in] value Числовое значение.
      * @return Отформатированная строка.
      */
-    std::string FormatDecimal(const double value);
+    std::string FormatDecimal(double value);
 
     /**
      * @brief Регистронезависимое сравнение строк.

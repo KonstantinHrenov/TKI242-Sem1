@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "ConfectioneryFactory.h"
@@ -41,15 +42,17 @@ TEST(DateTests, Date_Comparisons) {
 
 // ===================== Тесты моделей товаров =====================
 
-TEST(ProductTests, Product_StoresData) {
-    Product p("Какао", 300.0, "Бакалея");
-    EXPECT_EQ("Какао", p.GetName());
-    EXPECT_DOUBLE_EQ(300.0, p.GetPricePerKg());
-    EXPECT_EQ("Бакалея", p.GetCategory());
-    EXPECT_EQ("Товар", p.GetKindName());
+TEST(ProductTests, Product_IsAbstractAndStoresBaseData) {
+    EXPECT_TRUE(std::is_abstract<Product>::value);
+    RawMaterial rm("Какао", 300.0, "Бакалея", "ИмпортТрейд", 50.0);
+    Product& baseRef = rm;
+    EXPECT_EQ("Какао", baseRef.GetName());
+    EXPECT_DOUBLE_EQ(300.0, baseRef.GetPricePerKg());
+    EXPECT_EQ("Бакалея", baseRef.GetCategory());
+    EXPECT_EQ("Сырьё", baseRef.GetKindName());
 
-    p.SetPricePerKg(320.0);
-    EXPECT_DOUBLE_EQ(320.0, p.GetPricePerKg());
+    baseRef.SetPricePerKg(320.0);
+    EXPECT_DOUBLE_EQ(320.0, baseRef.GetPricePerKg());
 }
 
 TEST(ProductTests, RawMaterial_StoresSupplierAndOrder) {
@@ -104,14 +107,14 @@ TEST(ShopAndSaleTests, Sale_CalculatesTotalCost) {
 TEST(FactoryTests, Factory_StoresCollections) {
     ConfectioneryFactory factory("Сладкие Традиции");
     EXPECT_EQ("Сладкие Традиции", factory.GetName());
-    EXPECT_TRUE(factory.GetAllProducts().empty());
+    EXPECT_TRUE(factory.GetPolymorphicProducts().empty());
     EXPECT_TRUE(factory.GetRawMaterials().empty());
     EXPECT_TRUE(factory.GetConfectioneries().empty());
 
     factory.AddProduct(RawMaterial("Мука", 40.0, "Мучное", "Поставщик1", 500.0));
     factory.AddProduct(Confectionery("Торт", 500.0, "Торты", "Торт", 50.0));
 
-    EXPECT_EQ(2u, factory.GetAllProducts().size());
+    EXPECT_EQ(2u, factory.GetPolymorphicProducts().size());
     EXPECT_EQ(1u, factory.GetRawMaterials().size());
     EXPECT_EQ(1u, factory.GetConfectioneries().size());
 }
@@ -146,11 +149,8 @@ TEST(FactoryTests, Factory_FindProductByName_Overloads) {
     EXPECT_TRUE(factory.FindProductByName("Торт 'Прага'", cfFound));
     EXPECT_EQ("Торт", cfFound.GetKind());
 
-    Product prodFound("x", 0, "x");
-    EXPECT_TRUE(factory.FindProductByName("Мука", prodFound));
-    EXPECT_EQ("Мука", prodFound.GetName());
-
     EXPECT_TRUE(factory.HasProduct("Мука"));
+    EXPECT_TRUE(factory.HasProduct("Торт 'Прага'"));
     EXPECT_FALSE(factory.HasProduct("Несуществующий"));
 }
 

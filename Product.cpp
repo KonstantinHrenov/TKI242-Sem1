@@ -9,9 +9,6 @@ double Product::GetPricePerKg() const noexcept { return pricePerKg_; }
 const std::string& Product::GetCategory() const noexcept { return category_; }
 void Product::SetPricePerKg(double price) noexcept { pricePerKg_ = price; }
 
-std::string Product::GetKindName() const { return "Товар"; }
-std::string Product::GetSpecificInfo() const { return ""; }
-
 std::string Product::GetInfo() const {
     std::string info = "[" + GetKindName() + "] " + name_ + " (" + category_ + "), цена: " +
                        FormatUtils::FormatMoney(pricePerKg_);

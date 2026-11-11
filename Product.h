@@ -3,7 +3,7 @@
 #include <string>
 
 /**
- * @brief Базовый класс "Товар" кондитерской фабрики.
+ * @brief Абстрактный базовый класс "Товар" кондитерской фабрики.
  */
 class Product {
 public:
@@ -40,7 +40,7 @@ public:
     /**
      * @return Название вида товара.
      */
-    virtual std::string GetKindName() const;
+    virtual std::string GetKindName() const = 0;
 
     /**
      * @return Строковое описание товара.
@@ -51,7 +51,7 @@ protected:
     /**
      * @return Специфичная для наследника информация.
      */
-    virtual std::string GetSpecificInfo() const;
+    virtual std::string GetSpecificInfo() const = 0;
 
 private:
     std::string name_;

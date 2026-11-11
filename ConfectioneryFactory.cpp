@@ -10,21 +10,11 @@ const std::string& ConfectioneryFactory::GetName() const noexcept { return name_
 void ConfectioneryFactory::AddProduct(const RawMaterial& material) {
     rawMaterials_.push_back(material);
     productOrder_.emplace_back(true, rawMaterials_.size() - 1);
-    products_.push_back(Product(material.GetName(), material.GetPricePerKg(), material.GetCategory()));
 }
 
 void ConfectioneryFactory::AddProduct(const Confectionery& confectionery) {
     confectioneries_.push_back(confectionery);
     productOrder_.emplace_back(false, confectioneries_.size() - 1);
-    products_.push_back(Product(confectionery.GetName(), confectionery.GetPricePerKg(), confectionery.GetCategory()));
-}
-
-void ConfectioneryFactory::AddProduct(const Product& product) {
-    products_.push_back(product);
-}
-
-const std::vector<Product>& ConfectioneryFactory::GetAllProducts() const noexcept {
-    return products_;
 }
 
 const std::vector<RawMaterial>& ConfectioneryFactory::GetRawMaterials() const noexcept {
@@ -68,18 +58,11 @@ bool ConfectioneryFactory::FindProductByName(const std::string& name, Confection
     return false;
 }
 
-bool ConfectioneryFactory::FindProductByName(const std::string& name, Product& found) const {
-    for (const auto& item : products_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) {
-            found = item;
-            return true;
-        }
-    }
-    return false;
-}
-
 bool ConfectioneryFactory::HasProduct(const std::string& name) const {
-    for (const auto& item : products_) {
+    for (const auto& item : rawMaterials_) {
+        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) return true;
+    }
+    for (const auto& item : confectioneries_) {
         if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) return true;
     }
     return false;
