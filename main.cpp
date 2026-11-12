@@ -2,6 +2,7 @@
 #include <windows.h>
 #endif
 
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,9 +11,8 @@
 #include "FormatUtils.h"
 
 /**
- * @brief Точка входа в программу.
- *
- * @return 0 при успешном завершении.
+ * @brief Точка входа в программу
+ * @return 0, если программа выполнена корректно
  */
 int main() {
 #ifdef _WIN32
@@ -20,58 +20,78 @@ int main() {
     SetConsoleCP(CP_UTF8);
 #endif
 
-    // Создаём фабрику
-    ConfectioneryFactory factory("Кондитерская фабрика 'Сладкие Традиции'");
+    // Объекты типов-наследников: сырьё (поставщики: Мельница, СахарПром)
+    const RawMaterial flour("Мука", 45.0, "Мучное", "Мельница", 1000.0);
+    const RawMaterial sugar("Сахар", 55.0, "Сахаристое", "СахарПром", 500.0);
+    const RawMaterial cocoa("Какао", 350.0, "Шоколадное", "СахарПром", 200.0);
 
-    // Добавляем магазины
-    factory.AddShop(Shop("Сладкоежка", "ул. Ленина, 10"));
-    factory.AddShop(Shop("Лакомка", "ул. Пушкина, 5"));
+    Confectionery prague("Торт 'Прага'", 650.0, "Торты", "Шоколадный", 150.0, Date(2026, 9, 5));
+    prague.AddShop("Сладкоежка");
+    prague.AddShop("Лакомка");
 
-    // Добавляем сырьё (поставщики: Мельница, СахарПром)
-    factory.AddProduct(RawMaterial("Мука", 45.0, "Мучное", "Мельница", 1000.0));
-    factory.AddProduct(RawMaterial("Сахар", 55.0, "Сахаристое", "СахарПром", 500.0));
-    factory.AddProduct(RawMaterial("Какао", 350.0, "Шоколадное", "СахарПром", 200.0));
+    Confectionery honeyCake("Торт 'Медовик'", 520.0, "Торты", "Медовый", 100.0, Date(2026, 9, 10));
+    honeyCake.AddShop("Лакомка");
 
-    // Добавляем готовые изделия
-    Confectionery cake("Торт 'Прага'", 650.0, "Торты", "Торт", 150.0, Date(2026, 9, 5));
-    cake.AddShop("Сладкоежка");
-    cake.AddShop("Лакомка");
-    factory.AddProduct(cake);
-
-    Confectionery cookies("Печенье 'Юбилейное'", 180.0, "Печенье", "Печенье", 300.0, Date(2026, 9, 15));
+    Confectionery cookies("Печенье 'Юбилейное'", 180.0, "Печенье", "Сахарное", 300.0, Date(2026, 9, 15));
     cookies.AddShop("Сладкоежка");
-    factory.AddProduct(cookies);
 
-    // 1. Демонстрация полиморфизма (вывод всех товаров)
-    std::cout << "=== Демонстрация полиморфизма (Все товары) ===\n";
-    for (const auto& item : factory.GetPolymorphicProducts()) {
-        std::cout << "  " << item.get().GetInfo() << '\n';
+    const std::vector<std::reference_wrapper<const Product>> products = {
+        std::cref(flour), std::cref(sugar), std::cref(cocoa),
+        std::cref(prague), std::cref(honeyCake), std::cref(cookies)
+    };
+
+    std::cout << "=== Все товары (коллекция базового типа Product) ===\n";
+    for (const Product& product : products) {
+        std::cout << "  " << product.GetInfo() << '\n';
     }
     std::cout << "\n";
 
-    // 2. Выполнение 5 заданий варианта
-    std::cout << "=== Задание 1: Магазины для товара 'Торт 'Прага'' ===\n";
-    for (const auto& s : factory.GetShopsForProduct("Торт 'Прага'")) {
-        std::cout << "  - " << s << '\n';
+    // Создаём фабрику и заполняем её данными
+    ConfectioneryFactory factory("Кондитерская фабрика 'Сладкие Традиции'");
+
+    factory.AddShop(Shop("Сладкоежка", "ул. Ленина, 10"));
+    factory.AddShop(Shop("Лакомка", "ул. Пушкина, 5"));
+
+    factory.AddProduct(flour);
+    factory.AddProduct(sugar);
+    factory.AddProduct(cocoa);
+    factory.AddProduct(prague);
+    factory.AddProduct(honeyCake);
+    factory.AddProduct(cookies);
+
+    // Продажи изделий магазинам
+    factory.AddSale(Sale("Торт 'Прага'", "Сладкоежка", 40.0, 650.0, Date(2026, 9, 7)));
+    factory.AddSale(Sale("Торт 'Прага'", "Лакомка", 35.0, 650.0, Date(2026, 9, 9)));
+    factory.AddSale(Sale("Торт 'Медовик'", "Лакомка", 50.0, 520.0, Date(2026, 9, 12)));
+    factory.AddSale(Sale("Печенье 'Юбилейное'", "Сладкоежка", 120.0, 180.0, Date(2026, 9, 18)));
+
+    std::cout << factory.ToString() << "\n\n";
+
+    // Выполнение пяти заданий варианта
+    std::cout << "=== Задание 1: Магазины, заказывающие товар 'Торт 'Прага'' ===\n";
+    for (const std::string& shop : factory.GetShopsForProduct("Торт 'Прага'")) {
+        std::cout << "  - " << shop << '\n';
     }
 
-    std::cout << "\n=== Задание 2: Продукты у поставщика 'СахарПром' ===\n";
-    for (const auto& p : factory.GetProductsBySupplier("СахарПром")) {
-        std::cout << "  - " << p.GetName() << " (поставщик: " << p.GetSupplierName() << ")\n";
+    std::cout << "\n=== Задание 2: Продукты, заказываемые у поставщика 'СахарПром' ===\n";
+    for (const RawMaterial& material : factory.GetProductsBySupplier("СахарПром")) {
+        std::cout << "  - " << material.GetName() << " (поставщик: " << material.GetSupplierName() << ")\n";
     }
 
-    std::cout << "\n=== Задание 3: Ассортимент категории 'Печенье' ===\n";
-    std::vector<Confectionery> cookiesList;
-    factory.GetAssortmentByCategory("Печенье", cookiesList);
-    for (const auto& c : cookiesList) {
-        std::cout << "  - " << c.GetName() << ", цена: " << FormatUtils::FormatMoney(c.GetPricePerKg()) << '\n';
+    std::cout << "\n=== Задание 3: Ассортимент товара 'Торты' и цены ===\n";
+    std::vector<Confectionery> cakes;
+    factory.GetAssortmentByCategory("Торты", cakes);
+    for (const Confectionery& cake : cakes) {
+        std::cout << "  - " << cake.GetName() << " (вид: " << cake.GetKind() << "), цена: "
+            << FormatUtils::FormatMoney(cake.GetPricePerKg()) << '\n';
     }
 
-    std::cout << "\n=== Задание 4: Наиболее популярный вид ===\n";
-    std::cout << "  Популярный вид: " << factory.GetMostPopularKind() << '\n';
+    std::cout << "\n=== Задание 4: Наиболее популярный вид товара 'Торты' ===\n";
+    std::cout << "  Популярный вид: " << factory.GetMostPopularKind("Торты") << '\n';
 
     std::cout << "\n=== Задание 5: Стоимость произведенного товара за сентябрь ===\n";
-    std::cout << "  Итого: " << FormatUtils::FormatMoney(factory.GetProductionValueInPeriod(Date(2026, 9, 1), Date(2026, 9, 30))) << "\n";
+    std::cout << "  Итого: "
+        << FormatUtils::FormatMoney(factory.GetProductionValueInPeriod(Date(2026, 9, 1), Date(2026, 9, 30))) << "\n";
 
     return 0;
 }
