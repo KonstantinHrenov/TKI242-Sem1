@@ -31,28 +31,28 @@ std::vector<std::reference_wrapper<const Product>> ConfectioneryFactory::GetPoly
 
 bool ConfectioneryFactory::FindProductByName(const std::string& name, RawMaterial& found) const {
     for (const auto& item : rawMaterials_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) { found = item; return true; }
+        if (FormatUtils::Equals(item.GetName(), name)) { found = item; return true; }
     }
     return false;
 }
 
 bool ConfectioneryFactory::FindProductByName(const std::string& name, Confectionery& found) const {
     for (const auto& item : confectioneries_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) { found = item; return true; }
+        if (FormatUtils::Equals(item.GetName(), name)) { found = item; return true; }
     }
     return false;
 }
 
 bool ConfectioneryFactory::HasProduct(const std::string& name) const {
-    for (const auto& item : rawMaterials_) if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) return true;
-    for (const auto& item : confectioneries_) if (FormatUtils::EqualsIgnoreCase(item.GetName(), name)) return true;
+    for (const auto& item : rawMaterials_) if (FormatUtils::Equals(item.GetName(), name)) return true;
+    for (const auto& item : confectioneries_) if (FormatUtils::Equals(item.GetName(), name)) return true;
     return false;
 }
 
 std::vector<RawMaterial> ConfectioneryFactory::GetProductsBySupplier(const std::string& supplierName) const {
     std::vector<RawMaterial> result;
     for (const auto& item : rawMaterials_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetSupplierName(), supplierName)) result.push_back(item);
+        if (FormatUtils::Equals(item.GetSupplierName(), supplierName)) result.push_back(item);
     }
     return result;
 }
@@ -60,30 +60,39 @@ std::vector<RawMaterial> ConfectioneryFactory::GetProductsBySupplier(const std::
 void ConfectioneryFactory::GetAssortmentByCategory(const std::string& category, std::vector<RawMaterial>& outAssortment) const {
     outAssortment.clear();
     for (const auto& item : rawMaterials_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetCategory(), category)) outAssortment.push_back(item);
+        if (FormatUtils::Equals(item.GetCategory(), category)) outAssortment.push_back(item);
     }
 }
 
 void ConfectioneryFactory::GetAssortmentByCategory(const std::string& category, std::vector<Confectionery>& outAssortment) const {
     outAssortment.clear();
     for (const auto& item : confectioneries_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetCategory(), category)) outAssortment.push_back(item);
+        if (FormatUtils::Equals(item.GetCategory(), category)) outAssortment.push_back(item);
     }
 }
 
 std::vector<std::string> ConfectioneryFactory::GetShopsForProduct(const std::string& productName) const {
     for (const auto& item : confectioneries_) {
-        if (FormatUtils::EqualsIgnoreCase(item.GetName(), productName)) return item.GetShops();
+        if (FormatUtils::Equals(item.GetName(), productName)) return item.GetShops();
     }
     return {};
 }
 
-std::string ConfectioneryFactory::GetMostPopularKind() const {
-    std::map<std::string, double> popularity;
-    for (const auto& c : confectioneries_) popularity[c.GetKind()] += c.GetProducedKg();
-    std::string bestKind; double maxKg = -1.0;
-    for (const auto& pair : popularity) {
-        if (pair.second > maxKg) { maxKg = pair.second; bestKind = pair.first; }
+std::string ConfectioneryFactory::GetMostPopularKind(const std::string& category) const {
+    std::map<std::string, double> soldKgByKind;
+    for (const auto& sale : sales_) {
+        for (const auto& item : confectioneries_) {
+            if (FormatUtils::Equals(item.GetName(), sale.GetProductName()) &&
+                FormatUtils::Equals(item.GetCategory(), category)) {
+                soldKgByKind[item.GetKind()] += sale.GetKg();
+                break;
+            }
+        }
+    }
+    std::string bestKind;
+    double maxKg = 0.0;
+    for (const auto& entry : soldKgByKind) {
+        if (entry.second > maxKg) { maxKg = entry.second; bestKind = entry.first; }
     }
     return bestKind;
 }
