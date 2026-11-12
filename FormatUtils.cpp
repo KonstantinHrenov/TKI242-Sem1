@@ -14,6 +14,6 @@ namespace FormatUtils {
     }
 
     bool EqualsIgnoreCase(const std::string& a, const std::string& b) {
-        return a == b; 
+        return a == b;
     }
 }
