@@ -6,73 +6,89 @@
 #include <vector>
 
 /**
- * @brief Готовое кондитерское изделие.
+ * @brief Класс Confectionery (готовое кондитерское изделие) - наследник класса Product
  */
 class Confectionery : public Product {
 private:
+    /**
+     * @brief Вид изделия
+     */
     std::string kind_;
+
+    /**
+     * @brief Названия магазинов, заказывающих изделие
+     */
     std::vector<std::string> shops_;
+
+    /**
+     * @brief Произведённое количество (кг)
+     */
     double producedKg_;
+
+    /**
+     * @brief Дата производства
+     */
     Date productionDate_;
 
 protected:
     /**
-     * @brief Описание вида, веса и магазинов.
-     *
-     * @return Строка с информацией.
+     * @brief Получить информацию о виде, объёме производства, дате и магазинах
+     * @return строка вида "вид: ..., произведено: ... кг, дата: ..., магазины: ..."
      */
     std::string GetSpecificInfo() const override;
 
 public:
     /**
-     * @brief Создаёт готовое изделие.
-     *
-     * @param name Название изделия.
-     * @param pricePerKg Цена за килограмм.
-     * @param category Категория.
-     * @param kind Вид изделия (Торт, Печенье).
-     * @param producedKg Произведённый вес (кг).
-     * @param productionDate Дата производства.
+     * @brief Конструктор
+     * @param name - название изделия
+     * @param pricePerKg - цена за килограмм (руб.)
+     * @param category - категория изделия (товар), например "Торты"
+     * @param kind - вид изделия, например "Шоколадный"
+     * @param producedKg - произведённое количество (кг)
+     * @param productionDate - дата производства (по умолчанию 1 сентября 2026 года)
      */
-    Confectionery(const std::string& name, double pricePerKg, const std::string& category,
-        const std::string& kind, double producedKg, const Date& productionDate = Date(2026, 9, 1));
+    Confectionery(const std::string& name, const double pricePerKg, const std::string& category,
+        const std::string& kind, const double producedKg, const Date& productionDate = Date(2026, 9, 1));
 
     /**
-     * @return Вид изделия.
+     * @brief Получить вид изделия
+     * @return вид изделия
      */
     const std::string& GetKind() const noexcept;
 
     /**
-     * @return Произведённый вес.
+     * @brief Получить произведённое количество
+     * @return произведённое количество (кг)
      */
     double GetProducedKg() const noexcept;
 
     /**
-     * @return Дата производства.
+     * @brief Получить дату производства
+     * @return ссылку на дату производства
      */
     const Date& GetProductionDate() const noexcept;
 
     /**
-     * @return Список магазинов.
+     * @brief Получить список магазинов, заказывающих изделие
+     * @return ссылку на массив названий магазинов
      */
     const std::vector<std::string>& GetShops() const noexcept;
 
     /**
-     * @brief Добавляет магазин в список.
-     *
-     * @param shop Название магазина.
+     * @brief Добавить магазин, заказывающий изделие (повторно магазин не добавляется)
+     * @param shop - название магазина
      */
     void AddShop(const std::string& shop);
 
     /**
-     * @brief Увеличивает произведённый вес.
-     *
-     * @param kg Количество килограммов.
+     * @brief Увеличить произведённое количество
+     * @param kg - добавляемое количество (кг)
      */
-    void AddProduction(double kg) noexcept;
+    void AddProduction(const double kg) noexcept;
 
     /**
-     * @return Название вида: "Готовое изделие".
+     * @brief Получить название типа товара
+     * @return строка "Готовое изделие"
      */
     std::string GetKindName() const override;
 };
