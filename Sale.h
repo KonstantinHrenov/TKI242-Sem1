@@ -4,56 +4,80 @@
 #include <string>
 
 /**
- * @brief Запись о продаже.
+ * @brief Класс Sale (продажа партии изделия магазину)
  */
 class Sale {
 private:
+    /**
+     * @brief Название проданного изделия
+     */
     std::string productName_;
+
+    /**
+     * @brief Название магазина-покупателя
+     */
     std::string shopName_;
+
+    /**
+     * @brief Вес партии (кг)
+     */
     double kg_;
+
+    /**
+     * @brief Цена за килограмм (руб.)
+     */
     double pricePerKg_;
+
+    /**
+     * @brief Дата продажи
+     */
     Date saleDate_;
 
 public:
     /**
-     * @brief Создаёт запись о продаже.
-     *
-     * @param productName Название товара.
-     * @param shopName Название магазина.
-     * @param kg Вес партии (кг).
-     * @param pricePerKg Цена за килограмм.
-     * @param saleDate Дата продажи.
+     * @brief Конструктор
+     * @param productName - название изделия
+     * @param shopName - название магазина
+     * @param kg - вес партии (кг)
+     * @param pricePerKg - цена за килограмм (руб.)
+     * @param saleDate - дата продажи
      */
     Sale(const std::string& productName, const std::string& shopName,
-        double kg, double pricePerKg, const Date& saleDate);
+        const double kg, const double pricePerKg, const Date& saleDate);
 
     /**
-     * @return Название товара.
+     * @brief Получить название проданного изделия
+     * @return название изделия
      */
     const std::string& GetProductName() const noexcept;
 
     /**
-     * @return Название магазина.
+     * @brief Получить название магазина
+     * @return название магазина
      */
     const std::string& GetShopName() const noexcept;
 
     /**
-     * @return Вес партии.
+     * @brief Получить вес партии
+     * @return вес партии (кг)
      */
     double GetKg() const noexcept;
 
     /**
-     * @return Цена за килограмм.
+     * @brief Получить цену за килограмм
+     * @return цена за килограмм (руб.)
      */
     double GetPricePerKg() const noexcept;
 
     /**
-     * @return Общая стоимость (вес * цену).
+     * @brief Получить общую стоимость партии
+     * @return произведение веса партии на цену за килограмм (руб.)
      */
     double GetTotalCost() const noexcept;
 
     /**
-     * @return Дата продажи.
+     * @brief Получить дату продажи
+     * @return ссылку на дату продажи
      */
     const Date& GetDate() const noexcept;
 };
