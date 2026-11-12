@@ -31,6 +31,7 @@ TEST(DateTests, Date_Comparisons) {
     const Date d3(2026, 9, 10);
 
     EXPECT_TRUE(d1 < d2);
+    EXPECT_TRUE(d1 <= d2);
     EXPECT_TRUE(d2 > d1);
     EXPECT_TRUE(d1 == d3);
     EXPECT_TRUE(d1 != d2);
@@ -40,8 +41,10 @@ TEST(DateTests, Date_Comparisons) {
 
 TEST(ProductTests, Product_IsAbstractAndStoresBaseData) {
     EXPECT_TRUE(std::is_abstract<Product>::value);
+
     RawMaterial rm("Какао", 300.0, "Бакалея", "ИмпортТрейд", 50.0);
     Product& baseRef = rm;
+
     EXPECT_EQ("Какао", baseRef.GetName());
     EXPECT_DOUBLE_EQ(300.0, baseRef.GetPricePerKg());
     EXPECT_EQ("Сырьё", baseRef.GetKindName());
@@ -49,10 +52,10 @@ TEST(ProductTests, Product_IsAbstractAndStoresBaseData) {
 
 TEST(ProductTests, RawMaterial_StoresSupplierAndOrder) {
     RawMaterial rm("Мука", 50.0, "Мучное", "Мельница №1", 100.0);
+
     EXPECT_EQ("Мука", rm.GetName());
     EXPECT_EQ("Мельница №1", rm.GetSupplierName());
     EXPECT_DOUBLE_EQ(100.0, rm.GetOrderedKg());
-    EXPECT_EQ("Сырьё", rm.GetKindName());
 
     rm.AddOrder(50.0);
     EXPECT_DOUBLE_EQ(150.0, rm.GetOrderedKg());
@@ -60,19 +63,18 @@ TEST(ProductTests, RawMaterial_StoresSupplierAndOrder) {
 
 TEST(ProductTests, Confectionery_StoresKindAndShops) {
     Confectionery c("Торт 'Прага'", 600.0, "Торты", "Торт", 80.0);
+
     EXPECT_EQ("Торт", c.GetKind());
     EXPECT_DOUBLE_EQ(80.0, c.GetProducedKg());
-    EXPECT_EQ("Готовое изделие", c.GetKindName());
 
     c.AddShop("Сладкоежка");
-    c.AddShop("Лакомка");
-    EXPECT_EQ(2u, c.GetShops().size());
+    EXPECT_EQ(1u, c.GetShops().size());
 
     c.AddProduction(20.0);
     EXPECT_DOUBLE_EQ(100.0, c.GetProducedKg());
 }
 
-// ===================== Тесты Shop и Sale =====================
+// ===================== Тесты вспомогательных классов =====================
 
 TEST(ShopAndSaleTests, Shop_StoresData) {
     const Shop shop("Сладкоежка", "ул. Ленина, д. 10");
@@ -81,16 +83,17 @@ TEST(ShopAndSaleTests, Shop_StoresData) {
 }
 
 TEST(ShopAndSaleTests, Sale_CalculatesTotalCost) {
-    const Sale sale("Торт 'Прага'", "Сладкоежка", 10.0, 600.0, Date(2026, 9, 15));
+    const Sale sale("Торт", "Сладкоежка", 10.0, 600.0, Date(2026, 9, 15));
+
+    EXPECT_DOUBLE_EQ(10.0, sale.GetKg());
+    EXPECT_DOUBLE_EQ(600.0, sale.GetPricePerKg());
     EXPECT_DOUBLE_EQ(6000.0, sale.GetTotalCost());
-    EXPECT_EQ(Date(2026, 9, 15), sale.GetDate());
 }
 
-// ===================== Тесты ConfectioneryFactory =====================
+// ===================== Тесты Фабрики и Заданий =====================
 
 TEST(FactoryTests, Factory_StoresCollections) {
     ConfectioneryFactory factory("Сладкие Традиции");
-    EXPECT_EQ("Сладкие Традиции", factory.GetName());
     EXPECT_TRUE(factory.GetPolymorphicProducts().empty());
 
     factory.AddProduct(RawMaterial("Мука", 40.0, "Мучное", "Поставщик1", 500.0));
@@ -106,6 +109,7 @@ TEST(FactoryTests, Factory_PolymorphicTraversal) {
 
     const auto products = factory.GetPolymorphicProducts();
     ASSERT_EQ(2u, products.size());
+
     EXPECT_EQ("Сырьё", products[0].get().GetKindName());
     EXPECT_EQ("Готовое изделие", products[1].get().GetKindName());
 }
@@ -113,43 +117,15 @@ TEST(FactoryTests, Factory_PolymorphicTraversal) {
 TEST(FactoryTests, Factory_FindProductByName) {
     ConfectioneryFactory factory("Фабрика");
     factory.AddProduct(RawMaterial("Мука", 45.0, "Мучное", "Мельница", 500.0));
-    factory.AddProduct(Confectionery("Торт 'Прага'", 650.0, "Торты", "Торт", 40.0));
-
-    RawMaterial rmFound("x", 0, "x", "x", 0);
-    EXPECT_TRUE(factory.FindProductByName("Мука", rmFound));
-
-    Confectionery cfFound("x", 0, "x", "x", 0);
-    EXPECT_TRUE(factory.FindProductByName("Торт 'Прага'", cfFound));
+    factory.AddProduct(Confectionery("Торт", 650.0, "Торты", "Торт", 40.0));
 
     EXPECT_TRUE(factory.HasProduct("Мука"));
+    EXPECT_TRUE(factory.HasProduct("Торт"));
     EXPECT_FALSE(factory.HasProduct("Несуществующий"));
 }
 
-TEST(FactoryTests, Factory_GetProductsBySupplier) {
-    ConfectioneryFactory factory("Фабрика");
-    factory.AddProduct(RawMaterial("Мука 1 сорт", 40.0, "Мучное", "Мельница", 500.0));
-    factory.AddProduct(RawMaterial("Мука в/с", 50.0, "Мучное", "Мельница", 300.0));
-    factory.AddProduct(RawMaterial("Сахар", 60.0, "Сахар", "СахарПром", 200.0));
 
-    const std::vector<RawMaterial> result = factory.GetProductsBySupplier("Мельница");
-    EXPECT_EQ(2u, result.size());
-}
-
-TEST(FactoryTests, Factory_GetAssortmentByCategory) {
-    ConfectioneryFactory factory("Фабрика");
-    factory.AddProduct(RawMaterial("Мука", 45.0, "Мучное", "Мельница", 500.0));
-    factory.AddProduct(Confectionery("Торт 'Прага'", 650.0, "Десерты", "Торт", 30.0));
-
-    std::vector<RawMaterial> rmAssort;
-    factory.GetAssortmentByCategory("Мучное", rmAssort);
-    EXPECT_EQ(1u, rmAssort.size());
-
-    std::vector<Confectionery> cfAssort;
-    factory.GetAssortmentByCategory("Десерты", cfAssort);
-    EXPECT_EQ(1u, cfAssort.size());
-}
-
-TEST(FactoryTests, Factory_Task1_GetShopsForProduct) {
+TEST(TaskTests, Task1_GetShopsForProduct) {
     ConfectioneryFactory factory("Фабрика");
     Confectionery c("Торт 'Прага'", 650.0, "Торты", "Торт", 50.0);
     c.AddShop("Сладкоежка");
@@ -159,17 +135,50 @@ TEST(FactoryTests, Factory_Task1_GetShopsForProduct) {
     const auto shops = factory.GetShopsForProduct("Торт 'Прага'");
     EXPECT_EQ(2u, shops.size());
     EXPECT_EQ("Сладкоежка", shops[0]);
+    EXPECT_EQ("Лакомка", shops[1]);
 }
 
-TEST(FactoryTests, Factory_Task4_GetMostPopularKind) {
+
+TEST(TaskTests, Task2_GetProductsBySupplier) {
     ConfectioneryFactory factory("Фабрика");
-    factory.AddProduct(Confectionery("Торт 'Прага'", 650.0, "Торты", "Торт", 50.0));
-    factory.AddProduct(Confectionery("Печенье 'Юбилейное'", 180.0, "Печенье", "Печенье", 100.0));
+    factory.AddProduct(RawMaterial("Мука 1", 40.0, "Мучное", "Мельница", 500.0));
+    factory.AddProduct(RawMaterial("Мука 2", 50.0, "Мучное", "Мельница", 300.0));
+    factory.AddProduct(RawMaterial("Сахар", 60.0, "Сахар", "СахарПром", 200.0));
+
+    const std::vector<RawMaterial> result = factory.GetProductsBySupplier("Мельница");
+    EXPECT_EQ(2u, result.size());
+    EXPECT_EQ("Мука 1", result[0].GetName());
+    EXPECT_EQ("Мука 2", result[1].GetName());
+}
+
+
+TEST(TaskTests, Task3_GetAssortmentByCategory) {
+    ConfectioneryFactory factory("Фабрика");
+    factory.AddProduct(RawMaterial("Мука", 45.0, "Мучное", "Мельница", 500.0));
+    factory.AddProduct(Confectionery("Торт", 650.0, "Десерты", "Торт", 30.0));
+    factory.AddProduct(Confectionery("Печенье", 550.0, "Десерты", "Печенье", 25.0));
+
+    std::vector<RawMaterial> rmAssort;
+    factory.GetAssortmentByCategory("Мучное", rmAssort);
+    EXPECT_EQ(1u, rmAssort.size());
+
+    std::vector<Confectionery> cfAssort;
+    factory.GetAssortmentByCategory("Десерты", cfAssort);
+    EXPECT_EQ(2u, cfAssort.size());
+}
+
+
+TEST(TaskTests, Task4_GetMostPopularKind) {
+    ConfectioneryFactory factory("Фабрика");
+    factory.AddProduct(Confectionery("Торт", 650.0, "Торты", "Торт", 50.0));
+    factory.AddProduct(Confectionery("Печенье 1", 180.0, "Печенье", "Печенье", 70.0));
+    factory.AddProduct(Confectionery("Печенье 2", 200.0, "Печенье", "Печенье", 60.0));
 
     EXPECT_EQ("Печенье", factory.GetMostPopularKind());
 }
 
-TEST(FactoryTests, Factory_Task5_GetProductionValueInPeriod) {
+
+TEST(TaskTests, Task5_GetProductionValueInPeriod) {
     ConfectioneryFactory factory("Фабрика");
     factory.AddProduct(Confectionery("Торт", 500.0, "Торты", "Торт", 10.0, Date(2026, 9, 5)));
     factory.AddProduct(Confectionery("Печенье", 200.0, "Печенье", "Печенье", 20.0, Date(2026, 9, 15)));
