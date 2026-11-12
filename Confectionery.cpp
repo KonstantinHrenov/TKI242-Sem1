@@ -18,7 +18,7 @@ void Confectionery::AddShop(const std::string& shop) {
     shops_.push_back(shop);
 }
 
-void Confectionery::AddProduction(double kg) noexcept { producedKg_ += kg; }
+void Confectionery::AddProduction(const double kg) noexcept { producedKg_ += kg; }
 std::string Confectionery::GetKindName() const { return "Готовое изделие"; }
 
 std::string Confectionery::GetSpecificInfo() const {
