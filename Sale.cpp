@@ -1,9 +1,10 @@
 #include "Sale.h"
 
 Sale::Sale(const std::string& productName, const std::string& shopName,
-           double kg, double pricePerKg, const Date& saleDate)
+    double kg, double pricePerKg, const Date& saleDate)
     : productName_(productName), shopName_(shopName),
-      kg_(kg), pricePerKg_(pricePerKg), saleDate_(saleDate) {}
+    kg_(kg), pricePerKg_(pricePerKg), saleDate_(saleDate) {
+}
 
 const std::string& Sale::GetProductName() const noexcept { return productName_; }
 const std::string& Sale::GetShopName() const noexcept { return shopName_; }
