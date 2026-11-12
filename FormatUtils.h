@@ -3,31 +3,28 @@
 #include <string>
 
 /**
- * @brief Вспомогательные функции для работы со строками.
+ * @brief Пространство имён FormatUtils (вспомогательные функции для работы со строками)
  */
 namespace FormatUtils {
     /**
-     * @brief Добавляет к сумме слово "руб." и два знака после запятой.
-     *
-     * @param value Сумма в рублях.
-     * @return Отформатированная строка.
+     * @brief Получить строку с денежной суммой
+     * @param value - сумма в рублях
+     * @return строка вида "123.45 руб."
      */
-    std::string FormatMoney(double value);
+    std::string FormatMoney(const double value);
 
     /**
-     * @brief Оставляет у числа ровно два знака после запятой.
-     *
-     * @param value Числовое значение.
-     * @return Отформатированная строка.
+     * @brief Получить строку с числом, округлённым до двух знаков после запятой
+     * @param value - числовое значение
+     * @return строка вида "123.45"
      */
-    std::string FormatDecimal(double value);
+    std::string FormatDecimal(const double value);
 
     /**
-     * @brief Сравнивает две строки.
-     *
-     * @param a Первая строка.
-     * @param b Вторая строка.
-     * @return true, если строки равны.
+     * @brief Сравнить две строки (сравнение чувствительно к регистру)
+     * @param a - первая строка
+     * @param b - вторая строка
+     * @return true - если строки полностью совпадают, иначе false
      */
-    bool EqualsIgnoreCase(const std::string& a, const std::string& b);
+    bool Equals(const std::string& a, const std::string& b);
 }
