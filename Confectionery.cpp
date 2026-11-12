@@ -1,8 +1,8 @@
 #include "Confectionery.h"
 #include "FormatUtils.h"
 
-Confectionery::Confectionery(const std::string& name, double pricePerKg, const std::string& category,
-    const std::string& kind, double producedKg, const Date& productionDate)
+Confectionery::Confectionery(const std::string& name, const double pricePerKg, const std::string& category,
+    const std::string& kind, const double producedKg, const Date& productionDate)
     : Product(name, pricePerKg, category),
     kind_(kind), producedKg_(producedKg), productionDate_(productionDate) {
 }
@@ -14,12 +14,12 @@ const std::vector<std::string>& Confectionery::GetShops() const noexcept { retur
 
 void Confectionery::AddShop(const std::string& shop) {
     for (const auto& s : shops_) {
-        if (FormatUtils::EqualsIgnoreCase(s, shop)) return;
+        if (FormatUtils::Equals(s, shop)) return;
     }
     shops_.push_back(shop);
 }
 
-void Confectionery::AddProduction(double kg) noexcept { producedKg_ += kg; }
+void Confectionery::AddProduction(const double kg) noexcept { producedKg_ += kg; }
 std::string Confectionery::GetKindName() const { return "Готовое изделие"; }
 
 std::string Confectionery::GetSpecificInfo() const {
