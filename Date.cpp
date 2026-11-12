@@ -3,22 +3,22 @@
 #include <string>
 
 namespace {
-    bool IsLeap(int y) {
+    bool IsLeap(const int y) {
         return (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0);
     }
-    int DaysInMonth(int m, int y) {
+    int DaysInMonth(const int m, const int y) {
         if (m == 2) return IsLeap(y) ? 29 : 28;
         if (m == 4 || m == 6 || m == 9 || m == 11) return 30;
         return 31;
     }
 }
 
-void Date::Validate(int year, int month, int day) {
+void Date::Validate(const int year, const int month, const int day) {
     if (month < 1 || month > 12) throw std::invalid_argument("Date: неверный месяц");
     if (day < 1 || day > DaysInMonth(month, year)) throw std::invalid_argument("Date: неверный день");
 }
 
-Date::Date(int year, int month, int day) : year_(year), month_(month), day_(day) {
+Date::Date(const int year, const int month, const int day) : year_(year), month_(month), day_(day) {
     Validate(year_, month_, day_);
 }
 
