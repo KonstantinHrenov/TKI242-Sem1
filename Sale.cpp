@@ -1,7 +1,7 @@
 #include "Sale.h"
 
 Sale::Sale(const std::string& productName, const std::string& shopName,
-    double kg, double pricePerKg, const Date& saleDate)
+    const double kg, const double pricePerKg, const Date& saleDate)
     : productName_(productName), shopName_(shopName),
     kg_(kg), pricePerKg_(pricePerKg), saleDate_(saleDate) {
 }
