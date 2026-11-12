@@ -122,6 +122,16 @@ TEST(FactoryTests, Factory_FindProductByName) {
     EXPECT_TRUE(factory.HasProduct("Мука"));
     EXPECT_TRUE(factory.HasProduct("Торт"));
     EXPECT_FALSE(factory.HasProduct("Несуществующий"));
+
+    RawMaterial foundMaterial("", 0.0, "", "", 0.0);
+    EXPECT_TRUE(factory.FindProductByName("Мука", foundMaterial));
+    EXPECT_EQ("Мельница", foundMaterial.GetSupplierName());
+    EXPECT_FALSE(factory.FindProductByName("Торт", foundMaterial));
+
+    Confectionery foundConfectionery("", 0.0, "", "", 0.0);
+    EXPECT_TRUE(factory.FindProductByName("Торт", foundConfectionery));
+    EXPECT_DOUBLE_EQ(650.0, foundConfectionery.GetPricePerKg());
+    EXPECT_FALSE(factory.FindProductByName("Мука", foundConfectionery));
 }
 
 
@@ -170,11 +180,22 @@ TEST(TaskTests, Task3_GetAssortmentByCategory) {
 
 TEST(TaskTests, Task4_GetMostPopularKind) {
     ConfectioneryFactory factory("Фабрика");
-    factory.AddProduct(Confectionery("Торт", 650.0, "Торты", "Торт", 50.0));
-    factory.AddProduct(Confectionery("Печенье 1", 180.0, "Печенье", "Печенье", 70.0));
-    factory.AddProduct(Confectionery("Печенье 2", 200.0, "Печенье", "Печенье", 60.0));
+    factory.AddProduct(Confectionery("Прага", 650.0, "Торты", "Шоколадный", 50.0));
+    factory.AddProduct(Confectionery("Медовик", 520.0, "Торты", "Медовый", 70.0));
+    factory.AddProduct(Confectionery("Юбилейное", 180.0, "Печенье", "Сахарное", 300.0));
 
-    EXPECT_EQ("Печенье", factory.GetMostPopularKind());
+    // Пока продаж нет, популярный вид не определён
+    EXPECT_EQ("", factory.GetMostPopularKind("Торты"));
+
+    factory.AddSale(Sale("Прага", "Сладкоежка", 20.0, 650.0, Date(2026, 9, 5)));
+    factory.AddSale(Sale("Прага", "Лакомка", 15.0, 650.0, Date(2026, 9, 6)));
+    factory.AddSale(Sale("Медовик", "Лакомка", 30.0, 520.0, Date(2026, 9, 7)));
+    factory.AddSale(Sale("Юбилейное", "Сладкоежка", 200.0, 180.0, Date(2026, 9, 8)));
+
+    EXPECT_EQ(4u, factory.GetSales().size());
+    EXPECT_EQ("Шоколадный", factory.GetMostPopularKind("Торты"));
+    EXPECT_EQ("Сахарное", factory.GetMostPopularKind("Печенье"));
+    EXPECT_EQ("", factory.GetMostPopularKind("Конфеты"));
 }
 
 
