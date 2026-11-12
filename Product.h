@@ -3,18 +3,35 @@
 #include <string>
 
 /**
- * @brief Абстрактный базовый класс "Товар" кондитерской фабрики.
+ * @brief Базовый класс "Товар".
  */
 class Product {
+private:
+    std::string name_;
+    double pricePerKg_;
+    std::string category_;
+
+protected:
+    /**
+     * @brief Возвращает специфичную информацию для наследника.
+     *
+     * @return Строка с дополнительной информацией.
+     */
+    virtual std::string GetSpecificInfo() const = 0;
+
 public:
     /**
      * @brief Создаёт товар с базовыми атрибутами.
+     *
      * @param name Название товара.
      * @param pricePerKg Цена за килограмм.
      * @param category Категория товара.
      */
     Product(const std::string& name, double pricePerKg, const std::string& category);
 
+    /**
+     * @brief Виртуальный деструктор.
+     */
     virtual ~Product() = default;
 
     /**
@@ -33,28 +50,23 @@ public:
     const std::string& GetCategory() const noexcept;
 
     /**
-     * @param price Новая цена за килограмм.
+     * @brief Устанавливает новую цену.
+     *
+     * @param price Новая цена.
      */
     void SetPricePerKg(double price) noexcept;
 
     /**
-     * @return Название вида товара.
+     * @brief Возвращает название вида (Сырьё/Готовое изделие).
+     *
+     * @return Название вида.
      */
     virtual std::string GetKindName() const = 0;
 
     /**
-     * @return Строковое описание товара.
+     * @brief Возвращает полную строку с информацией о товаре.
+     *
+     * @return Описание товара.
      */
     virtual std::string GetInfo() const;
-
-protected:
-    /**
-     * @return Специфичная для наследника информация.
-     */
-    virtual std::string GetSpecificInfo() const = 0;
-
-private:
-    std::string name_;
-    double pricePerKg_;
-    std::string category_;
 };
