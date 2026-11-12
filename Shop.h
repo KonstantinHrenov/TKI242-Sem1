@@ -3,28 +3,29 @@
 #include <string>
 
 /**
- * @brief Магазин, заказывающий продукцию фабрики.
+ * @brief Магазин.
  */
 class Shop {
+private:
+    std::string name_;
+    std::string address_;
+
 public:
     /**
      * @brief Создаёт магазин.
+     *
      * @param name Название магазина.
      * @param address Адрес магазина.
      */
     Shop(const std::string& name, const std::string& address);
 
     /**
-     * @return Название магазина.
+     * @return Название.
      */
     const std::string& GetName() const noexcept;
 
     /**
-     * @return Адрес магазина.
+     * @return Адрес.
      */
     const std::string& GetAddress() const noexcept;
-
-private:
-    std::string name_;
-    std::string address_;
 };
