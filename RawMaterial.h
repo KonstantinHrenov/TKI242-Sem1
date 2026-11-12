@@ -4,53 +4,60 @@
 #include <string>
 
 /**
- * @brief Сырьё (мука, сахар и т.д.).
+ * @brief Класс RawMaterial (сырьё, заказываемое у поставщика) - наследник класса Product
  */
 class RawMaterial : public Product {
 private:
+    /**
+     * @brief Название поставщика
+     */
     std::string supplierName_;
+
+    /**
+     * @brief Заказанное количество (кг)
+     */
     double orderedKg_;
 
 protected:
     /**
-     * @brief Описание поставщика и заказа.
-     *
-     * @return Строка с информацией.
+     * @brief Получить информацию о поставщике и объёме заказа
+     * @return строка вида "поставщик: ..., заказ: ... кг"
      */
     std::string GetSpecificInfo() const override;
 
 public:
     /**
-     * @brief Создаёт партию сырья.
-     *
-     * @param name Название сырья.
-     * @param pricePerKg Цена за килограмм.
-     * @param category Категория.
-     * @param supplierName Имя поставщика.
-     * @param orderedKg Заказанное количество (кг).
+     * @brief Конструктор
+     * @param name - название сырья
+     * @param pricePerKg - цена за килограмм (руб.)
+     * @param category - категория сырья
+     * @param supplierName - название поставщика
+     * @param orderedKg - заказанное количество (кг)
      */
-    RawMaterial(const std::string& name, double pricePerKg, const std::string& category,
-        const std::string& supplierName, double orderedKg);
+    RawMaterial(const std::string& name, const double pricePerKg, const std::string& category,
+        const std::string& supplierName, const double orderedKg);
 
     /**
-     * @return Имя поставщика.
+     * @brief Получить название поставщика
+     * @return название поставщика
      */
     const std::string& GetSupplierName() const noexcept;
 
     /**
-     * @return Заказанное количество (кг).
+     * @brief Получить заказанное количество
+     * @return заказанное количество (кг)
      */
     double GetOrderedKg() const noexcept;
 
     /**
-     * @brief Добавляет килограммы к заказу.
-     *
-     * @param kg Количество для добавления.
+     * @brief Увеличить объём заказа
+     * @param kg - добавляемое количество (кг)
      */
-    void AddOrder(double kg) noexcept;
+    void AddOrder(const double kg) noexcept;
 
     /**
-     * @return Название вида: "Сырьё".
+     * @brief Получить название типа товара
+     * @return строка "Сырьё"
      */
     std::string GetKindName() const override;
 };
