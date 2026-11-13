@@ -21,6 +21,7 @@ TEST(DateTests, Date_ParseValidAndInvalid) {
     const Date d = Date::Parse("2026-09-22");
     EXPECT_EQ(2026, d.GetYear());
     EXPECT_THROW(Date::Parse("invalid"), std::invalid_argument);
+    EXPECT_THROW(Date::Parse("2026-1x-05"), std::invalid_argument);
     EXPECT_THROW(Date::Parse("2026-13-01"), std::invalid_argument);
     EXPECT_THROW(Date(2026, 2, 30), std::invalid_argument);
 }
@@ -35,6 +36,12 @@ TEST(DateTests, Date_Comparisons) {
     EXPECT_TRUE(d2 > d1);
     EXPECT_TRUE(d1 == d3);
     EXPECT_TRUE(d1 != d2);
+
+    // Даты до 1970 года тоже сравниваются корректно
+    EXPECT_TRUE(Date(1960, 5, 1) < Date(1965, 1, 1));
+    EXPECT_EQ(0, Date(1970, 1, 1).ToDayNumber());
+    EXPECT_EQ(-1, Date(1969, 12, 31).ToDayNumber());
+    EXPECT_EQ(30, Date(2026, 9, 1).DaysUntil(Date(2026, 10, 1)));
 }
 
 // ===================== Тесты моделей товаров =====================
