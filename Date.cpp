@@ -1,4 +1,5 @@
 #include "Date.h"
+#include <cstddef>
 #include <stdexcept>
 #include <string>
 
@@ -22,10 +23,15 @@ Date::Date(const int year, const int month, const int day) : year_(year), month_
     Validate(year_, month_, day_);
 }
 
-Date Date::Parse(const std::string& iso) {
-    if (iso.size() != 10 || iso[4] != '-' || iso[7] != '-')
+Date Date::Parse(const std::string& isoDate) {
+    if (isoDate.size() != 10 || isoDate[4] != '-' || isoDate[7] != '-')
         throw std::invalid_argument("Date::Parse: ожидается формат ГГГГ-ММ-ДД");
-    return Date(std::stoi(iso.substr(0, 4)), std::stoi(iso.substr(5, 2)), std::stoi(iso.substr(8, 2)));
+    for (std::size_t i = 0; i < isoDate.size(); ++i) {
+        if (i == 4 || i == 7) continue;
+        if (isoDate[i] < '0' || isoDate[i] > '9')
+            throw std::invalid_argument("Date::Parse: ожидается формат ГГГГ-ММ-ДД");
+    }
+    return Date(std::stoi(isoDate.substr(0, 4)), std::stoi(isoDate.substr(5, 2)), std::stoi(isoDate.substr(8, 2)));
 }
 
 int Date::GetYear() const noexcept { return year_; }
@@ -41,6 +47,7 @@ std::string Date::ToString() const {
 long Date::ToDayNumber() const noexcept {
     long total = 0;
     for (int y = 1970; y < year_; ++y) total += IsLeap(y) ? 366 : 365;
+    for (int y = year_; y < 1970; ++y) total -= IsLeap(y) ? 366 : 365;
     for (int m = 1; m < month_; ++m) total += DaysInMonth(m, year_);
     total += day_ - 1;
     return total;
@@ -50,9 +57,9 @@ long Date::DaysUntil(const Date& other) const noexcept {
     return other.ToDayNumber() - ToDayNumber();
 }
 
-bool Date::operator==(const Date& o) const noexcept { return year_ == o.year_ && month_ == o.month_ && day_ == o.day_; }
-bool Date::operator!=(const Date& o) const noexcept { return !(*this == o); }
-bool Date::operator<(const Date& o) const noexcept { return ToDayNumber() < o.ToDayNumber(); }
-bool Date::operator<=(const Date& o) const noexcept { return ToDayNumber() <= o.ToDayNumber(); }
-bool Date::operator>(const Date& o) const noexcept { return ToDayNumber() > o.ToDayNumber(); }
-bool Date::operator>=(const Date& o) const noexcept { return ToDayNumber() >= o.ToDayNumber(); }
+bool Date::operator==(const Date& other) const noexcept { return year_ == other.year_ && month_ == other.month_ && day_ == other.day_; }
+bool Date::operator!=(const Date& other) const noexcept { return !(*this == other); }
+bool Date::operator<(const Date& other) const noexcept { return ToDayNumber() < other.ToDayNumber(); }
+bool Date::operator<=(const Date& other) const noexcept { return ToDayNumber() <= other.ToDayNumber(); }
+bool Date::operator>(const Date& other) const noexcept { return ToDayNumber() > other.ToDayNumber(); }
+bool Date::operator>=(const Date& other) const noexcept { return ToDayNumber() >= other.ToDayNumber(); }
