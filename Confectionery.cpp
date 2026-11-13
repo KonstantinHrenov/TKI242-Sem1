@@ -1,5 +1,6 @@
 #include "Confectionery.h"
 #include "FormatUtils.h"
+#include <cstddef>
 
 Confectionery::Confectionery(const std::string& name, const double pricePerKg, const std::string& category,
     const std::string& kind, const double producedKg, const Date& productionDate)
@@ -27,7 +28,7 @@ std::string Confectionery::GetSpecificInfo() const {
     s += ", дата: " + productionDate_.ToString();
     if (!shops_.empty()) {
         s += ", магазины: ";
-        for (size_t i = 0; i < shops_.size(); ++i) {
+        for (std::size_t i = 0; i < shops_.size(); ++i) {
             if (i > 0) s += ", ";
             s += shops_[i];
         }
